@@ -222,54 +222,54 @@ st.markdown("""
 .conversion-note {
     background: rgba(14,92,92,.06);
     border-radius: 6px;
-    padding: 12px 16px;
+    padding: 14px 18px;
     font-family: 'DM Mono', monospace;
-    font-size: 12px;
+    font-size: 14px;
     color: var(--teal);
-    line-height: 1.6;
-    margin: 12px 0;
+    line-height: 1.7;
+    margin: 14px 0;
 }
 
 .narrative {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 15px;
+    font-size: 18px;
     line-height: 1.7;
     color: var(--muted);
     font-style: italic;
-    margin: 12px 0;
+    margin: 14px 0;
 }
 
 .pain-box {
     background: rgba(139,26,26,.04);
     border-left: 3px solid var(--red);
-    padding: 12px 16px;
+    padding: 14px 18px;
     font-family: 'DM Mono', monospace;
-    font-size: 12px;
+    font-size: 14px;
     color: var(--red);
-    line-height: 1.6;
+    line-height: 1.7;
     border-radius: 0 6px 6px 0;
-    margin: 12px 0;
+    margin: 14px 0;
 }
 
 .era-quote {
     background: var(--card-bg);
     border-left: 3px solid var(--gold);
-    padding: 14px 18px;
+    padding: 16px 20px;
     margin: 14px 0;
     border-radius: 0 8px 8px 0;
 }
 .era-quote blockquote {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 16px;
+    font-size: 19px;
     line-height: 1.5;
     color: var(--text);
     font-style: italic;
-    margin: 0 0 6px 0;
+    margin: 0 0 8px 0;
     padding: 0;
 }
 .era-quote .quote-attr {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 13px;
     color: var(--muted);
     letter-spacing: 0.5px;
 }
@@ -282,7 +282,7 @@ st.markdown("""
 }
 .metric-label {
     font-family: 'DM Mono', monospace;
-    font-size: 10px;
+    font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--muted);
@@ -290,11 +290,11 @@ st.markdown("""
 }
 .metric-val {
     font-family: 'DM Mono', monospace;
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 500;
     color: var(--text);
 }
-.metric-val.gold { color: var(--gold); font-size: 22px; }
+.metric-val.gold { color: var(--gold); font-size: 24px; }
 .metric-val.teal { color: var(--teal); }
 .metric-val.green { color: var(--green); }
 
@@ -307,9 +307,9 @@ st.markdown("""
 }
 .bar-label-text {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 13px;
     color: var(--muted);
-    width: 100px;
+    width: 110px;
     text-align: right;
     flex-shrink: 0;
 }
@@ -331,9 +331,9 @@ st.markdown("""
 .bar-fill-muted { background: var(--border); }
 .bar-val-text {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 13px;
     color: var(--text);
-    width: 100px;
+    width: 110px;
     font-weight: 500;
 }
 
