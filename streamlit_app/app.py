@@ -787,7 +787,7 @@ with tab1:
         unsafe_allow_html=True,
     )
     st.markdown(
-        '<div class="closing-tagline">The risk was never buying at the top. The risk was not buying at all.</div>',
+        '<div class="closing-tagline">"The risk was never buying at the top. The risk was not buying at all."<br><span style="font-size:14px;color:var(--muted);font-style:normal">— Paul Ruedi</span></div>',
         unsafe_allow_html=True,
     )
 
