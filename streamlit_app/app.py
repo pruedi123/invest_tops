@@ -582,8 +582,8 @@ SCENARIOS = [
      "quote": "It is highly likely it goes to 600 or below.",
      "quote_attr": "Nouriel Roubini, Mar 9, 2009 — the exact day of the market bottom"},
     {"num": 9, "label": "Pre-Pandemic Peak", "short": "COVID", "date": 2020.02, "crash": "−34%", "peak_desc": "Peak before −34% COVID crash in 33 days",
-     "narrative": "COVID-19 was spreading globally but markets hadn't priced it in yet. Then the fastest 30%+ decline in market history — 33 days. Lockdowns, mass unemployment, and an economy in freefall.",
-     "pain": "34% decline in 33 days — the fastest crash on this list. Yet the market fully recovered within 5 months, the fastest recovery in history.",
+     "narrative": "On February 25, six days after the peak, Larry Kudlow told investors the virus was \"pretty close to airtight\" contained and to \"seriously consider buying the dip.\" Fifteen days before the peak, the President declared \"our economy is the best it has ever been.\" Then came the fastest 30%+ decline in market history — 34% in 33 days. Lockdowns, mass unemployment, and an economy in freefall.",
+     "pain": "34% decline in 33 days — the fastest crash on this list. David Stockman declared \"Wall Street is toast.\" Guggenheim's Scott Minerd predicted the S&P would fall to 1,200. Nouriel Roubini warned of a \"Greater Depression.\" Jeffrey Gundlach was actively shorting, betting the lows would be retaken. The market fully recovered within 5 months — the fastest recovery in history.",
      "quote": "Hell is coming.",
      "quote_attr": "Bill Ackman, CNBC — Mar 18, 2020, five days before the bottom"},
 ]
