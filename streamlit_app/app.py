@@ -251,6 +251,29 @@ st.markdown("""
     margin: 12px 0;
 }
 
+.era-quote {
+    background: var(--card-bg);
+    border-left: 3px solid var(--gold);
+    padding: 14px 18px;
+    margin: 14px 0;
+    border-radius: 0 8px 8px 0;
+}
+.era-quote blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text);
+    font-style: italic;
+    margin: 0 0 6px 0;
+    padding: 0;
+}
+.era-quote .quote-attr {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+}
+
 .metric-card {
     background: var(--bg);
     border-radius: 8px;
@@ -520,28 +543,44 @@ def fmt_x(n):
 SCENARIOS = [
     {"num": 1, "label": "The Great Crash", "short": "Great Crash", "date": 1929.09, "crash": "−89%", "peak_desc": "Peak before −89% collapse",
      "narrative": '"The market will never recover." The Dow didn\'t reclaim its 1929 high until 1954 — 25 years later. And yet, with dividends reinvested, the patient investor went on to extraordinary wealth.',
-     "pain": "Market fell 89% peak-to-trough. By 1932, the investment had shrunk to ~20¢ on the dollar. Most investors sold in panic and locked in permanent losses."},
+     "pain": "Market fell 89% peak-to-trough. By 1932, the investment had shrunk to ~20¢ on the dollar. Most investors sold in panic and locked in permanent losses.",
+     "quote": "Stock prices have reached what looks like a permanently high plateau.",
+     "quote_attr": "Irving Fisher, New York Times — Oct 16, 1929"},
     {"num": 2, "label": "Depression-Era Rally Peak", "short": "Depression Rally", "date": 1937.02, "crash": "−60%", "peak_desc": "Peak before −60% plunge",
      "narrative": "Markets had recovered 80% from the Depression lows by 1937 — then the Fed tightened prematurely, sending stocks down another 60%. Investors who'd just returned were crushed again.",
-     "pain": "Two consecutive crashes within a decade. It took until 1945 to break even on price alone."},
+     "pain": "Two consecutive crashes within a decade. It took until 1945 to break even on price alone.",
+     "quote": "There is no real and fundamental basis upon which to build enduring prosperity.",
+     "quote_attr": "Commercial &amp; Financial Chronicle — Apr 2, 1938"},
     {"num": 3, "label": "Go-Go Era Peak", "short": "Go-Go Era", "date": 1968.11, "crash": "−36%", "peak_desc": "Peak before the stagflation decade",
      "narrative": 'The "Nifty Fifty" era — glamour stocks at any price. Then oil shocks, Vietnam, Nixon\'s resignation, and 15% inflation. The 1970s were the worst decade for real returns in market history.',
-     "pain": "Real inflation-adjusted losses persisted for over a decade. By 1982, purchasing power was still negative vs. the 1968 entry. A brutal 14-year grind."},
+     "pain": "Real inflation-adjusted losses persisted for over a decade. By 1982, purchasing power was still negative vs. the 1968 entry. A brutal 14-year grind.",
+     "quote": "The Death of Equities: How Inflation Is Destroying the Stock Market",
+     "quote_attr": "BusinessWeek cover story — Aug 13, 1979"},
     {"num": 4, "label": "Pre-Oil Shock Peak", "short": "Oil Shock", "date": 1973.01, "crash": "−48%", "peak_desc": "Peak before −48% bear market",
      "narrative": "OPEC's oil embargo sent inflation to 12%, stocks crashed 48%, and the U.S. entered its worst recession since the Depression. The Nifty Fifty darlings lost 80–90% individually.",
-     "pain": "A vicious double-whammy: portfolio down nearly half while prices of everything else doubled. The real purchasing power of the investment was gutted."},
+     "pain": "A vicious double-whammy: portfolio down nearly half while prices of everything else doubled. The real purchasing power of the investment was gutted.",
+     "quote": "Is There No Bottom? The plain fact is that there is simply not enough good economic news to sustain a real market comeback.",
+     "quote_attr": "Newsweek — 1974"},
     {"num": 5, "label": "Black Monday Peak", "short": "Black Monday", "date": 1987.08, "crash": "−34%", "peak_desc": "Peak before −34% crash in 77 days",
      "narrative": "On October 19, 1987, the Dow fell 22.6% in a single day — the largest one-day drop in history. The market had been \"too high\" for months. It fully recovered within 2 years.",
-     "pain": None},
+     "pain": None,
+     "quote": "Does 1987 Equal 1929?",
+     "quote_attr": "New York Times, front page — Oct 20, 1987"},
     {"num": 6, "label": "Dot-Com Bubble Peak", "short": "Dot-Com", "date": 2000.01, "crash": "−49%", "peak_desc": "Peak before −49% crash over 2.5 years",
      "narrative": "The NASDAQ fell 78%. Individual tech stocks lost 90–99%. Valuation metrics were said to be obsolete. They weren't. The hardest entry point on this list — yet still profitable over 25 years.",
-     "pain": "S&P 500 didn't reclaim Jan 2000 levels until 2007 — then immediately crashed again. On a real basis, still underwater in 2012. A 12-year price drought."},
+     "pain": "S&P 500 didn't reclaim Jan 2000 levels until 2007 — then immediately crashed again. On a real basis, still underwater in 2012. A 12-year price drought.",
+     "quote": "Let's start calling the sell off what it is. Let's call it a panic. Let's call it a crash.",
+     "quote_attr": "CNN/Money — Jul 19, 2002"},
     {"num": 7, "label": "Housing Bubble Peak", "short": "Housing Bubble", "date": 2007.10, "crash": "−57%", "peak_desc": "Peak before −57% financial crisis",
      "narrative": "The Global Financial Crisis. Lehman Brothers collapsed. The banking system nearly failed. Many serious analysts believed capitalism itself was at risk.",
-     "pain": "−57% decline. The S&P 500 didn't reclaim Oct 2007 highs until March 2013 — 5.5 years later."},
+     "pain": "−57% decline. The S&P 500 didn't reclaim Oct 2007 highs until March 2013 — 5.5 years later.",
+     "quote": "It is highly likely it goes to 600 or below.",
+     "quote_attr": "Nouriel Roubini, Mar 9, 2009 — the exact day of the market bottom"},
     {"num": 8, "label": "Pre-Pandemic Peak", "short": "COVID", "date": 2020.02, "crash": "−34%", "peak_desc": "Peak before −34% COVID crash in 33 days",
      "narrative": "COVID-19 was spreading globally but markets hadn't priced it in yet. Then the fastest 30%+ decline in market history — 33 days. Lockdowns, mass unemployment, and an economy in freefall.",
-     "pain": "34% decline in 33 days — the fastest crash on this list. Yet the market fully recovered within 5 months, the fastest recovery in history."},
+     "pain": "34% decline in 33 days — the fastest crash on this list. Yet the market fully recovered within 5 months, the fastest recovery in history.",
+     "quote": "Hell is coming.",
+     "quote_attr": "Bill Ackman, CNBC — Mar 18, 2020, five days before the bottom"},
 ]
 
 DATE_ALIASES = {
@@ -745,6 +784,15 @@ with tab1:
             )
 
             st.markdown(f'<div class="narrative">{s["narrative"]}</div>', unsafe_allow_html=True)
+
+            if s.get("quote"):
+                st.markdown(
+                    f'<div class="era-quote">'
+                    f'<blockquote>"{s["quote"]}"</blockquote>'
+                    f'<div class="quote-attr">— {s["quote_attr"]}</div>'
+                    f'</div>',
+                    unsafe_allow_html=True,
+                )
 
             if s["pain"]:
                 st.markdown(f'<div class="pain-box"><strong>The Pain</strong><br>{s["pain"]}</div>', unsafe_allow_html=True)
