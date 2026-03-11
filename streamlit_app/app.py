@@ -561,22 +561,27 @@ SCENARIOS = [
      "pain": "A vicious double-whammy: portfolio down nearly half while prices of everything else doubled. The real purchasing power of the investment was gutted.",
      "quote": "Is There No Bottom? The plain fact is that there is simply not enough good economic news to sustain a real market comeback.",
      "quote_attr": "Newsweek — 1974"},
-    {"num": 5, "label": "Black Monday Peak", "short": "Black Monday", "date": 1987.08, "crash": "−34%", "peak_desc": "Peak before −34% crash in 77 days",
+    {"num": 5, "label": "Death of Equities", "short": "Death of Equities", "date": 1979.08, "crash": "N/A", "peak_desc": "Not a peak — but nothing made you want to own stocks",
+     "narrative": "This wasn't a market top. It was something worse: the moment America gave up on stocks entirely. After a decade of inflation, oil shocks, and grinding losses, BusinessWeek declared equities dead in what became the most infamous magazine cover in financial history. The Dow sat at 875. Within three years, the greatest bull market of the 20th century began.",
+     "pain": "No crash followed — but that's the point. Stocks had already been punishing investors for over a decade. Real returns since 1968 were negative. Seven million shareholders had abandoned the market. The pain was already priced in — and then some.",
+     "quote": "The Death of Equities: How Inflation Is Destroying the Stock Market",
+     "quote_attr": "BusinessWeek cover story — Aug 13, 1979"},
+    {"num": 6, "label": "Black Monday Peak", "short": "Black Monday", "date": 1987.08, "crash": "−34%", "peak_desc": "Peak before −34% crash in 77 days",
      "narrative": "On October 19, 1987, the Dow fell 22.6% in a single day — the largest one-day drop in history. The market had been \"too high\" for months. It fully recovered within 2 years.",
      "pain": None,
      "quote": "Does 1987 Equal 1929?",
      "quote_attr": "New York Times, front page — Oct 20, 1987"},
-    {"num": 6, "label": "Dot-Com Bubble Peak", "short": "Dot-Com", "date": 2000.01, "crash": "−49%", "peak_desc": "Peak before −49% crash over 2.5 years",
+    {"num": 7, "label": "Dot-Com Bubble Peak", "short": "Dot-Com", "date": 2000.01, "crash": "−49%", "peak_desc": "Peak before −49% crash over 2.5 years",
      "narrative": "The NASDAQ fell 78%. Individual tech stocks lost 90–99%. Valuation metrics were said to be obsolete. They weren't. The hardest entry point on this list — yet still profitable over 25 years.",
      "pain": "S&P 500 didn't reclaim Jan 2000 levels until 2007 — then immediately crashed again. On a real basis, still underwater in 2012. A 12-year price drought.",
      "quote": "Let's start calling the sell off what it is. Let's call it a panic. Let's call it a crash.",
      "quote_attr": "CNN/Money — Jul 19, 2002"},
-    {"num": 7, "label": "Housing Bubble Peak", "short": "Housing Bubble", "date": 2007.10, "crash": "−57%", "peak_desc": "Peak before −57% financial crisis",
+    {"num": 8, "label": "Housing Bubble Peak", "short": "Housing Bubble", "date": 2007.10, "crash": "−57%", "peak_desc": "Peak before −57% financial crisis",
      "narrative": "The Global Financial Crisis. Lehman Brothers collapsed. The banking system nearly failed. Many serious analysts believed capitalism itself was at risk.",
      "pain": "−57% decline. The S&P 500 didn't reclaim Oct 2007 highs until March 2013 — 5.5 years later.",
      "quote": "It is highly likely it goes to 600 or below.",
      "quote_attr": "Nouriel Roubini, Mar 9, 2009 — the exact day of the market bottom"},
-    {"num": 8, "label": "Pre-Pandemic Peak", "short": "COVID", "date": 2020.02, "crash": "−34%", "peak_desc": "Peak before −34% COVID crash in 33 days",
+    {"num": 9, "label": "Pre-Pandemic Peak", "short": "COVID", "date": 2020.02, "crash": "−34%", "peak_desc": "Peak before −34% COVID crash in 33 days",
      "narrative": "COVID-19 was spreading globally but markets hadn't priced it in yet. Then the fastest 30%+ decline in market history — 33 days. Lockdowns, mass unemployment, and an economy in freefall.",
      "pain": "34% decline in 33 days — the fastest crash on this list. Yet the market fully recovered within 5 months, the fastest recovery in history.",
      "quote": "Hell is coming.",
@@ -762,7 +767,7 @@ with tab1:
     """, unsafe_allow_html=True)
 
     # Scenario Cards
-    st.markdown('<div class="section-label">Eight Market Peaks · Eight Worst-Case Investors · One Result</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-label">Nine Moments of Maximum Pessimism · Nine Investors · One Result</div>', unsafe_allow_html=True)
 
     for s, r in zip(SCENARIOS, results):
         scaled = r["scaled"]
@@ -830,7 +835,7 @@ with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
     st.markdown(
         f'<div class="closing-quote">Every investor with the equivalent of {fmt(investment)} in today\'s money '
-        f'who bought at the absolute peak of every major bubble — and simply held — made money. '
+        f'who bought at the peaks, at the worst moments, even when the experts declared stocks dead — and simply held — made money. '
         f'In every single case.</div>',
         unsafe_allow_html=True,
     )
