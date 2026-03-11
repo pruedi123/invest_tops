@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What If You Bought At The Very Top?</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f2ed;--gold:#7a5c08;--green:#155c38;--teal:#0e5c5c;--blue:#1a3f7a;--red:#8b1a1a;--text:#2a2a28;--muted:#6b6860;--card-bg:#fffef9;--border:#d5d0c6}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Mono',monospace;background:var(--bg);color:var(--text);font-size:14px;line-height:1.65;padding:0}
+.container{max-width:960px;margin:0 auto;padding:0 24px}
+
+/* ── Hero ── */
+.hero{text-align:center;padding:80px 24px 50px}
+.eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:16px}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,6vw,60px);font-weight:700;line-height:1.1;color:var(--text);margin-bottom:20px}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero .subtitle{font-family:'Cormorant Garamond',serif;font-size:18px;line-height:1.6;color:var(--muted);max-width:720px;margin:0 auto 30px;font-style:italic}
+.invest-control{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.invest-control label{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.invest-control input{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--green);background:var(--card-bg);border:2px solid var(--border);border-radius:6px;padding:8px 16px;width:220px;text-align:center;transition:border-color .2s}
+.invest-control input:focus{outline:none;border-color:var(--teal)}
+.preset-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.preset-btns button{font-family:'DM Mono',monospace;font-size:12px;background:var(--card-bg);border:1px solid var(--border);border-radius:4px;padding:5px 14px;cursor:pointer;transition:all .2s;color:var(--text)}
+.preset-btns button:hover{border-color:var(--teal);color:var(--teal)}
+
+/* ── Section labels ── */
+.section-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);text-align:center;margin:60px 0 24px}
+
+/* ── Methodology ── */
+.method-box{background:var(--card-bg);border:2px solid var(--teal);border-radius:10px;padding:32px;margin:0 auto 40px;max-width:960px}
+.method-box h3{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--teal);margin-bottom:16px}
+.method-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.method-cols p,.method-cols .formula{font-size:13px;line-height:1.7;color:var(--muted)}
+.method-cols .formula{background:var(--bg);border-radius:6px;padding:16px;font-size:12px;line-height:1.8}
+.method-cols .formula strong{color:var(--teal)}
+@media(max-width:640px){.method-cols{grid-template-columns:1fr}}
+
+/* ── CPI Strip ── */
+.cpi-strip{margin:0 auto 50px;max-width:960px}
+.cpi-strip h3{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--text);text-align:center;margin-bottom:20px}
+.cpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.cpi-tile{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:14px 10px;text-align:center}
+.cpi-tile .cpi-date{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.cpi-tile .cpi-amt{font-family:'DM Mono',monospace;font-size:17px;font-weight:500;color:var(--teal)}
+.cpi-tile .cpi-eq{font-size:10px;color:var(--muted);margin-top:2px}
+@media(max-width:700px){.cpi-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ── Fear Bar ── */
+.fear-bar{background:var(--card-bg);border:2px solid var(--red);border-radius:10px;padding:28px 32px;margin:0 auto 50px;max-width:960px;display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.fear-icon{font-size:28px;flex-shrink:0}
+.fear-text{flex:1;min-width:0}
+.fear-text strong{font-family:'DM Mono',monospace;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--red);display:block;margin-bottom:8px}
+.fear-text p{font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.6;color:var(--muted)}
+.fear-badge{flex-shrink:0;border:2px solid var(--red);border-radius:8px;background:#fff;padding:14px 18px;font-family:'DM Mono',monospace;font-size:11px;line-height:1.5;color:var(--red);max-width:280px;text-align:center;font-weight:500}
+@media(max-width:700px){.fear-bar{flex-direction:column}.fear-badge{max-width:100%}}
+
+/* ── Scenario Cards ── */
+.cards-section{max-width:960px;margin:0 auto 50px}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;margin-bottom:12px;overflow:hidden;transition:box-shadow .2s}
+.card:hover{box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card-header{display:flex;align-items:center;padding:18px 24px;cursor:pointer;gap:16px;user-select:none}
+.card-num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--border);width:36px;flex-shrink:0}
+.card-info{flex:1;min-width:0}
+.card-info .card-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--text)}
+.card-info .card-peak{font-size:11px;color:var(--muted)}
+.card-invested{text-align:right;margin-right:8px}
+.card-invested .ci-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.card-invested .ci-val{font-size:14px;color:var(--teal);font-weight:500}
+.card-result{text-align:right;margin-right:8px}
+.card-result .cr-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+.card-result .cr-val{font-family:'DM Mono',monospace;font-size:20px;color:var(--gold);font-weight:500}
+.chevron{font-size:18px;color:var(--muted);transition:transform .3s;flex-shrink:0}
+.card.open .chevron{transform:rotate(90deg)}
+.card-body{display:none;padding:0 24px 24px;border-top:1px solid var(--border)}
+.card.open .card-body{display:block}
+
+.conversion-note{background:rgba(14,92,92,.06);border-radius:6px;padding:12px 16px;margin:16px 0;font-size:12px;color:var(--teal);line-height:1.6}
+.narrative{font-family:'Cormorant Garamond',serif;font-size:15px;line-height:1.7;color:var(--muted);font-style:italic;margin:16px 0}
+.pain-box{background:rgba(139,26,26,.04);border-left:3px solid var(--red);padding:12px 16px;margin:12px 0;font-size:12px;color:var(--red);line-height:1.6;border-radius:0 6px 6px 0}
+.pain-box strong{display:block;margin-bottom:4px;text-transform:uppercase;font-size:11px;letter-spacing:1px}
+
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+.metric{background:var(--bg);border-radius:8px;padding:14px;text-align:center}
+.metric .m-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px}
+.metric .m-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--text)}
+.metric.star .m-val{color:var(--gold);font-size:22px}
+.metric .m-sub{font-size:10px;color:var(--muted);margin-top:2px}
+@media(max-width:600px){.metrics-grid{grid-template-columns:repeat(2,1fr)}}
+
+.bar-chart{margin:20px 0 0}
+.bar-row{display:flex;align-items:center;margin-bottom:8px;gap:10px}
+.bar-label{font-size:11px;color:var(--muted);width:110px;text-align:right;flex-shrink:0}
+.bar-track{flex:1;height:22px;background:var(--bg);border-radius:4px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:4px;width:0;transition:width 1.2s cubic-bezier(.22,1,.36,1)}
+.bar-fill.gold{background:var(--gold)}
+.bar-fill.green{background:var(--green)}
+.bar-fill.teal{background:var(--teal)}
+.bar-fill.muted{background:var(--border)}
+.bar-val{font-size:11px;color:var(--text);width:100px;flex-shrink:0;font-weight:500}
+
+/* ── Closing ── */
+.closing{text-align:center;padding:60px 24px;max-width:720px;margin:0 auto}
+.closing .pullquote{font-family:'Cormorant Garamond',serif;font-size:22px;line-height:1.5;color:var(--text);margin-bottom:20px;font-weight:600}
+.closing .tagline{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);font-style:italic}
+
+/* ── Summary Table ── */
+.summary-section{max-width:960px;margin:0 auto 50px}
+.summary-table{width:100%;border-collapse:collapse;font-size:12px}
+.summary-table th{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:2px solid var(--border);padding:8px 10px;text-align:left}
+.summary-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
+.summary-table .col-gold{color:var(--gold);font-weight:500}
+.summary-table .col-teal{color:var(--teal)}
+@media(max-width:600px){.summary-table{font-size:10px}.summary-table th,.summary-table td{padding:6px 4px}}
+
+/* ── Footnote ── */
+.footnote{text-align:center;padding:30px 24px 60px;font-size:11px;color:var(--muted);line-height:1.7;max-width:720px;margin:0 auto}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.anim{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.anim.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     LAYER 1: EMBEDDED DATA
+     ═══════════════════════════════════════════ -->
+<script>
+const FACTORS = {
+  "data_end_date": 2026.03,
+  "data_end_str": "Mar 2026",
+  "cpi_end": 326.151,
+  "reference_investment": 100000,
+  "scenarios": [
+    {"num":1,"label":"The Great Crash","peak_desc":"Peak before −89% collapse","start_date":1929.09,"start_str":"Sep 1929","end_str":"Mar 2026","cpi_start":17.3,"cpi_factor":18.85,"scaled":5304,"real_tr_f":370.19,"nom_tr_f":6979.0,"price_r_f":11.64,"div_nom_f":84.6,"div_real_f":4.5,"div_start_r":17.72,"div_end_r":80.03,"years":96},
+    {"num":2,"label":"Depression-Era Rally Peak","peak_desc":"Peak before −60% plunge","start_date":1937.02,"start_str":"Feb 1937","end_str":"Mar 2026","cpi_start":14.1,"cpi_factor":23.13,"scaled":4323,"real_tr_f":346.56,"nom_tr_f":8016.5,"price_r_f":16.4,"div_nom_f":107.5,"div_real_f":4.7,"div_start_r":17.12,"div_end_r":80.03,"years":89},
+    {"num":3,"label":"Go-Go Era Peak","peak_desc":"Peak before the stagflation decade","start_date":1968.11,"start_str":"Nov 1968","end_str":"Mar 2026","cpi_start":35.4,"cpi_factor":9.21,"scaled":10854,"real_tr_f":33.82,"nom_tr_f":311.6,"price_r_f":7.07,"div_nom_f":26.0,"div_real_f":2.8,"div_start_r":28.16,"div_end_r":80.03,"years":57},
+    {"num":4,"label":"Pre-Oil Shock Peak","peak_desc":"Peak before −48% bear market","start_date":1973.01,"start_str":"Jan 1973","end_str":"Mar 2026","cpi_start":42.6,"cpi_factor":7.66,"scaled":13061,"real_tr_f":31.67,"nom_tr_f":242.5,"price_r_f":7.58,"div_nom_f":25.2,"div_real_f":3.3,"div_start_r":24.17,"div_end_r":80.03,"years":53},
+    {"num":5,"label":"Black Monday Peak","peak_desc":"Peak before −34% crash in 77 days","start_date":1987.08,"start_str":"Aug 1987","end_str":"Mar 2026","cpi_start":114.4,"cpi_factor":2.85,"scaled":35076,"real_tr_f":16.11,"nom_tr_f":45.9,"price_r_f":7.31,"div_nom_f":9.2,"div_real_f":3.3,"div_start_r":24.56,"div_end_r":80.03,"years":38},
+    {"num":6,"label":"Dot-Com Bubble Peak","peak_desc":"Peak before −49% crash over 2.5 years","start_date":2000.01,"start_str":"Jan 2000","end_str":"Mar 2026","cpi_start":168.8,"cpi_factor":1.93,"scaled":51755,"real_tr_f":3.98,"nom_tr_f":7.7,"price_r_f":2.49,"div_nom_f":4.8,"div_real_f":2.5,"div_start_r":32.29,"div_end_r":80.03,"years":26},
+    {"num":7,"label":"Housing Bubble Peak","peak_desc":"Peak before −57% financial crisis","start_date":2007.10,"start_str":"Oct 2007","end_str":"Mar 2026","cpi_start":208.936,"cpi_factor":1.56,"scaled":64061,"real_tr_f":4.03,"nom_tr_f":6.3,"price_r_f":2.86,"div_nom_f":2.9,"div_real_f":1.9,"div_start_r":42.51,"div_end_r":80.03,"years":18},
+    {"num":8,"label":"Pre-Pandemic Peak","peak_desc":"Peak before −34% COVID crash in 33 days","start_date":2020.02,"start_str":"Feb 2020","end_str":"Mar 2026","cpi_start":258.678,"cpi_factor":1.26,"scaled":79312,"real_tr_f":1.81,"nom_tr_f":2.3,"price_r_f":1.66,"div_nom_f":1.3,"div_real_f":1.1,"div_start_r":74.56,"div_end_r":80.03,"years":6}
+  ]
+};
+
+let investment = 250000;
+
+function fmt(n) {
+  if (n == null) return '—';
+  if (Math.abs(n) >= 1e9) return '$' + (n/1e9).toFixed(1) + 'B';
+  if (Math.abs(n) >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M';
+  if (Math.abs(n) >= 1e3) return '$' + Math.round(n).toLocaleString('en-US');
+  return '$' + n.toFixed(0);
+}
+function fmtInput(n) {
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+function fmtX(n) {
+  if (n == null) return '—';
+  if (n >= 100) return n.toFixed(0) + '×';
+  if (n >= 10) return n.toFixed(1) + '×';
+  return n.toFixed(2) + '×';
+}
+
+function calc(s) {
+  const scaled = investment * (s.cpi_start / FACTORS.cpi_end);
+  return {
+    scaled: scaled,
+    real_end: scaled * s.real_tr_f,
+    nom_end: scaled * s.nom_tr_f,
+    price_only: scaled * s.price_r_f
+  };
+}
+
+function render() {
+  // Update all inv-ref spans
+  document.querySelectorAll('.inv-ref').forEach(el => { el.textContent = fmtInput(investment); });
+
+  // Methodology formula example (scenario 5 = Aug 1987)
+  const s5 = FACTORS.scenarios[4];
+  const ex = document.getElementById('formula-example');
+  if (ex) {
+    const s5scaled = investment * (s5.cpi_start / FACTORS.cpi_end);
+    ex.innerHTML =
+      `<strong>Example — Aug 1987:</strong><br>` +
+      `CPI then: ${s5.cpi_start} · CPI now: ${FACTORS.cpi_end}<br>` +
+      `${fmtInput(investment)} × (${s5.cpi_start} ÷ ${FACTORS.cpi_end.toFixed(1)})<br>` +
+      `= <strong>${fmt(s5scaled)}</strong> invested in 1987 dollars`;
+  }
+
+  // CPI tiles
+  FACTORS.scenarios.forEach(s => {
+    const v = calc(s);
+    const tile = document.querySelector(`.cpi-tile[data-scenario="${s.num}"] .cpi-amt`);
+    if (tile) tile.textContent = fmt(v.scaled);
+  });
+
+  // Scenario cards
+  FACTORS.scenarios.forEach(s => {
+    const v = calc(s);
+    // header
+    const ci = document.querySelector(`.card[data-scenario="${s.num}"] .ci-val`);
+    if (ci) ci.textContent = fmt(v.scaled);
+    const cr = document.querySelector(`.card[data-scenario="${s.num}"] .cr-val`);
+    if (cr) cr.textContent = fmt(v.real_end);
+
+    // body fields
+    const body = document.querySelector(`.card[data-scenario="${s.num}"] .card-body`);
+    if (!body) return;
+    body.querySelector('.conv-scaled').textContent = fmt(v.scaled);
+    body.querySelector('.conv-cpi-s').textContent = s.cpi_start;
+    body.querySelector('.conv-cpi-e').textContent = FACTORS.cpi_end.toFixed(1);
+
+    body.querySelector('.m-invested').textContent = fmt(v.scaled);
+    body.querySelector('.m-real-end').textContent = fmt(v.real_end);
+    body.querySelector('.m-nom-end').textContent = fmt(v.nom_end);
+    body.querySelector('.m-price-only').textContent = fmt(v.price_only);
+
+    // bars
+    const maxVal = Math.max(v.real_end, v.nom_end, v.price_only, v.scaled);
+    setBars(body, v, maxVal);
+  });
+
+  // Summary table
+  FACTORS.scenarios.forEach(s => {
+    const v = calc(s);
+    const row = document.querySelector(`.summary-table tr[data-scenario="${s.num}"]`);
+    if (!row) return;
+    row.querySelector('.s-invested').textContent = fmt(v.scaled);
+    row.querySelector('.s-real-end').textContent = fmt(v.real_end);
+  });
+}
+
+function setBars(body, v, maxVal) {
+  const bars = body.querySelectorAll('.bar-row');
+  const vals = [v.nom_end, v.real_end, v.price_only, v.scaled];
+  bars.forEach((row, i) => {
+    const fill = row.querySelector('.bar-fill');
+    const lbl = row.querySelector('.bar-val');
+    const pct = (vals[i] / maxVal) * 100;
+    fill.style.width = '0%';
+    lbl.textContent = fmt(vals[i]);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => { fill.style.width = pct + '%'; });
+    });
+  });
+}
+
+function setInvestment(val) {
+  investment = val;
+  document.getElementById('investInput').value = fmtInput(val);
+  render();
+}
+
+function parseInput() {
+  const raw = document.getElementById('investInput').value.replace(/[^0-9.]/g, '');
+  const v = parseFloat(raw);
+  if (!isNaN(v) && v > 0) {
+    investment = v;
+    render();
+  }
+  document.getElementById('investInput').value = fmtInput(investment);
+}
+</script>
+
+<!-- ═══════════════════════════════════════════
+     LAYER 2 & 3: STATIC HTML + DYNAMIC SPANS
+     ═══════════════════════════════════════════ -->
+
+<!-- ── 1. HERO ── -->
+<section class="hero">
+  <div class="eyebrow">S&amp;P 500 · Shiller CAPE Data · Total Return With Dividends Reinvested</div>
+  <h1>What If You Bought At The <em>Very Top?</em></h1>
+  <p class="subtitle">Every generation believes the market is overvalued and ready to crash. Here is what actually happened to someone with the equivalent of <span class="inv-ref"></span> in today's money who bought at the absolute peak of every major bubble — and simply held.</p>
+  <div class="invest-control">
+    <label>Investment (today's $):</label>
+    <input type="text" id="investInput" value="$250,000" onchange="parseInput()" onkeydown="if(event.key==='Enter'){parseInput();this.blur();}">
+  </div>
+  <div class="preset-btns">
+    <button onclick="setInvestment(10000)">$10K</button>
+    <button onclick="setInvestment(50000)">$50K</button>
+    <button onclick="setInvestment(100000)">$100K</button>
+    <button onclick="setInvestment(500000)">$500K</button>
+    <button onclick="setInvestment(1000000)">$1M</button>
+  </div>
+</section>
+
+<!-- ── 2. METHODOLOGY ── -->
+<div class="container">
+  <div class="method-box anim">
+    <h3>📐 How We Made This Apples-to-Apples</h3>
+    <div class="method-cols">
+      <div>
+        <p>A flat <span class="inv-ref"></span> at each peak is misleading. That amount in 1929 would be a fortune; in 2020 it's a modest sum. To compare honestly, we scale every investment using CPI so each one represents the <strong>same real purchasing power</strong> as <span class="inv-ref"></span> today.</p>
+        <p style="margin-top:10px">Every dollar figure on this page is computed live from factor multipliers — change the amount above and every number updates instantly.</p>
+      </div>
+      <div class="formula" id="formula-example">
+        <!-- filled by render() -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 3. CPI STRIP ── -->
+<div class="container">
+  <div class="cpi-strip anim">
+    <h3>The Equivalent Dollar Amount Invested At Each Peak</h3>
+    <div class="cpi-grid">
+      <script>
+      document.write(FACTORS.scenarios.map(s =>
+        `<div class="cpi-tile" data-scenario="${s.num}">
+          <div class="cpi-date">${s.start_str}</div>
+          <div class="cpi-amt">—</div>
+          <div class="cpi-eq">≡ <span class="inv-ref"></span> today</div>
+        </div>`
+      ).join(''));
+      </script>
+    </div>
+  </div>
+</div>
+
+<!-- ── 4. FEAR BAR ── -->
+<div class="container">
+  <div class="fear-bar anim">
+    <div class="fear-icon">⚠️</div>
+    <div class="fear-text">
+      <strong>THE NARRATIVE AT EVERY SINGLE PEAK</strong>
+      <p>"Valuations are stretched." · "The market can't go higher." · "A crash is inevitable." · People have said this at every single peak — 1929, 1968, 2000, 2007, the pandemic crash of 2020, and today.</p>
+    </div>
+    <div class="fear-badge">EVERY SINGLE TIME, THEY WERE RIGHT ABOUT THE CRASH — AND WRONG ABOUT WHAT FOLLOWED.</div>
+  </div>
+</div>
+
+<!-- ── 5. SCENARIO CARDS ── -->
+<div class="container">
+  <div class="section-label">Eight Market Peaks · Eight Worst-Case Investors · One Result</div>
+  <div class="cards-section">
+
+    <!-- Card 1: 1929 -->
+    <div class="card anim" data-scenario="1">
+      <div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="card-num">1</div>
+        <div class="card-info">
+          <div class="card-title">The Great Crash · Sep 1929</div>
+          <div class="card-peak">Peak before −89% collapse</div>
+        </div>
+        <div class="card-invested"><div class="ci-label">Invested</div><div class="ci-val">—</div></div>
+        <div class="card-result"><div class="cr-label">★ Real Value</div><div class="cr-val">—</div></div>
+        <div class="chevron">▸</div>
+      </div>
+      <div class="card-body">
+        <div class="conversion-note">Invested <span class="conv-scaled">—</span> (CPI <span class="conv-cpi-s">—</span> → <span class="conv-cpi-e">—</span>) — equivalent purchasing power of <span class="inv-ref"></span> today.</div>
+        <div class="narrative">"The market will never recover." The Dow didn't reclaim its 1929 high until 1954 — 25 years later. And yet, with dividends reinvested, the patient investor went on to extraordinary wealth.</div>
+        <div class="pain-box"><strong>The Pain</strong>Market fell 89% peak-to-trough. By 1932, the investment had shrunk to ~20¢ on the dollar. Most investors sold in panic and locked in permanent losses.</div>
+        <div class="metrics-grid">
+          <div class="metric"><div class="m-label">Invested</div><div class="m-val m-invested">—</div></div>
+          <div class="metric star"><div class="m-label">★ Real Ending Value</div><div class="m-val m-real-end">—</div></div>
+          <div class="metric"><div class="m-label">Nominal Ending Value</div><div class="m-val m-nom-end">—</div></div>
+          <div class="metric"><div class="m-label">Price Only (Real)</div><div class="m-val m-price-only">—</div></div>
+          <div class="metric"><div class="m-label">Dividend Growth (Real)</div><div class="m-val">4.5×</div></div>
+          <div class="metric"><div class="m-label">Holding Period</div><div class="m-val">96 years</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-row"><div class="bar-label">Nominal TR</div><div class="bar-track"><div class="bar-fill gold"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Real TR ★</div><div class="bar-track"><div class="bar-fill green"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Price Only</div><div class="bar-track"><div class="bar-fill teal"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Invested</div><div class="bar-track"><div class="bar-fill muted"></div></div><div class="bar-val">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2: 1937 -->
+    <div class="card anim" data-scenario="2">
+      <div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="card-num">2</div>
+        <div class="card-info">
+          <div class="card-title">Depression-Era Rally Peak · Feb 1937</div>
+          <div class="card-peak">Peak before −60% plunge</div>
+        </div>
+        <div class="card-invested"><div class="ci-label">Invested</div><div class="ci-val">—</div></div>
+        <div class="card-result"><div class="cr-label">★ Real Value</div><div class="cr-val">—</div></div>
+        <div class="chevron">▸</div>
+      </div>
+      <div class="card-body">
+        <div class="conversion-note">Invested <span class="conv-scaled">—</span> (CPI <span class="conv-cpi-s">—</span> → <span class="conv-cpi-e">—</span>) — equivalent purchasing power of <span class="inv-ref"></span> today.</div>
+        <div class="narrative">Markets had recovered 80% from the Depression lows by 1937 — then the Fed tightened prematurely, sending stocks down another 60%. Investors who'd just returned were crushed again.</div>
+        <div class="pain-box"><strong>The Pain</strong>Two consecutive crashes within a decade. It took until 1945 to break even on price alone.</div>
+        <div class="metrics-grid">
+          <div class="metric"><div class="m-label">Invested</div><div class="m-val m-invested">—</div></div>
+          <div class="metric star"><div class="m-label">★ Real Ending Value</div><div class="m-val m-real-end">—</div></div>
+          <div class="metric"><div class="m-label">Nominal Ending Value</div><div class="m-val m-nom-end">—</div></div>
+          <div class="metric"><div class="m-label">Price Only (Real)</div><div class="m-val m-price-only">—</div></div>
+          <div class="metric"><div class="m-label">Dividend Growth (Real)</div><div class="m-val">4.7×</div></div>
+          <div class="metric"><div class="m-label">Holding Period</div><div class="m-val">89 years</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-row"><div class="bar-label">Nominal TR</div><div class="bar-track"><div class="bar-fill gold"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Real TR ★</div><div class="bar-track"><div class="bar-fill green"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Price Only</div><div class="bar-track"><div class="bar-fill teal"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Invested</div><div class="bar-track"><div class="bar-fill muted"></div></div><div class="bar-val">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: 1968 -->
+    <div class="card anim" data-scenario="3">
+      <div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="card-num">3</div>
+        <div class="card-info">
+          <div class="card-title">Go-Go Era Peak · Nov 1968</div>
+          <div class="card-peak">Peak before the stagflation decade</div>
+        </div>
+        <div class="card-invested"><div class="ci-label">Invested</div><div class="ci-val">—</div></div>
+        <div class="card-result"><div class="cr-label">★ Real Value</div><div class="cr-val">—</div></div>
+        <div class="chevron">▸</div>
+      </div>
+      <div class="card-body">
+        <div class="conversion-note">Invested <span class="conv-scaled">—</span> (CPI <span class="conv-cpi-s">—</span> → <span class="conv-cpi-e">—</span>) — equivalent purchasing power of <span class="inv-ref"></span> today.</div>
+        <div class="narrative">The "Nifty Fifty" era — glamour stocks at any price. Then oil shocks, Vietnam, Nixon's resignation, and 15% inflation. The 1970s were the worst decade for real returns in market history.</div>
+        <div class="pain-box"><strong>The Pain</strong>Real inflation-adjusted losses persisted for over a decade. By 1982, purchasing power was still negative vs. the 1968 entry. A brutal 14-year grind.</div>
+        <div class="metrics-grid">
+          <div class="metric"><div class="m-label">Invested</div><div class="m-val m-invested">—</div></div>
+          <div class="metric star"><div class="m-label">★ Real Ending Value</div><div class="m-val m-real-end">—</div></div>
+          <div class="metric"><div class="m-label">Nominal Ending Value</div><div class="m-val m-nom-end">—</div></div>
+          <div class="metric"><div class="m-label">Price Only (Real)</div><div class="m-val m-price-only">—</div></div>
+          <div class="metric"><div class="m-label">Dividend Growth (Real)</div><div class="m-val">2.8×</div></div>
+          <div class="metric"><div class="m-label">Holding Period</div><div class="m-val">57 years</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-row"><div class="bar-label">Nominal TR</div><div class="bar-track"><div class="bar-fill gold"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Real TR ★</div><div class="bar-track"><div class="bar-fill green"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Price Only</div><div class="bar-track"><div class="bar-fill teal"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Invested</div><div class="bar-track"><div class="bar-fill muted"></div></div><div class="bar-val">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: 1973 -->
+    <div class="card anim" data-scenario="4">
+      <div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="card-num">4</div>
+        <div class="card-info">
+          <div class="card-title">Pre-Oil Shock Peak · Jan 1973</div>
+          <div class="card-peak">Peak before −48% bear market</div>
+        </div>
+        <div class="card-invested"><div class="ci-label">Invested</div><div class="ci-val">—</div></div>
+        <div class="card-result"><div class="cr-label">★ Real Value</div><div class="cr-val">—</div></div>
+        <div class="chevron">▸</div>
+      </div>
+      <div class="card-body">
+        <div class="conversion-note">Invested <span class="conv-scaled">—</span> (CPI <span class="conv-cpi-s">—</span> → <span class="conv-cpi-e">—</span>) — equivalent purchasing power of <span class="inv-ref"></span> today.</div>
+        <div class="narrative">OPEC's oil embargo sent inflation to 12%, stocks crashed 48%, and the U.S. entered its worst recession since the Depression. The Nifty Fifty darlings lost 80–90% individually.</div>
+        <div class="pain-box"><strong>The Pain</strong>A vicious double-whammy: portfolio down nearly half while prices of everything else doubled. The real purchasing power of the investment was gutted.</div>
+        <div class="metrics-grid">
+          <div class="metric"><div class="m-label">Invested</div><div class="m-val m-invested">—</div></div>
+          <div class="metric star"><div class="m-label">★ Real Ending Value</div><div class="m-val m-real-end">—</div></div>
+          <div class="metric"><div class="m-label">Nominal Ending Value</div><div class="m-val m-nom-end">—</div></div>
+          <div class="metric"><div class="m-label">Price Only (Real)</div><div class="m-val m-price-only">—</div></div>
+          <div class="metric"><div class="m-label">Dividend Growth (Real)</div><div class="m-val">3.3×</div></div>
+          <div class="metric"><div class="m-label">Holding Period</div><div class="m-val">53 years</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-row"><div class="bar-label">Nominal TR</div><div class="bar-track"><div class="bar-fill gold"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Real TR ★</div><div class="bar-track"><div class="bar-fill green"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Price Only</div><div class="bar-track"><div class="bar-fill teal"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Invested</div><div class="bar-track"><div class="bar-fill muted"></div></div><div class="bar-val">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5: 1987 -->
+    <div class="card anim" data-scenario="5">
+      <div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="card-num">5</div>
+        <div class="card-info">
+          <div class="card-title">Black Monday Peak · Aug 1987</div>
+          <div class="card-peak">Peak before −34% crash in 77 days</div>
+        </div>
+        <div class="card-invested"><div class="ci-label">Invested</div><div class="ci-val">—</div></div>
+        <div class="card-result"><div class="cr-label">★ Real Value</div><div class="cr-val">—</div></div>
+        <div class="chevron">▸</div>
+      </div>
+      <div class="card-body">
+        <div class="conversion-note">Invested <span class="conv-scaled">—</span> (CPI <span class="conv-cpi-s">—</span> → <span class="conv-cpi-e">—</span>) — equivalent purchasing power of <span class="inv-ref"></span> today.</div>
+        <div class="narrative">On October 19, 1987, the Dow fell 22.6% in a single day — the largest one-day drop in history. The market had been "too high" for months. It fully recovered within 2 years.</div>
+        <div class="metrics-grid">
+          <div class="metric"><div class="m-label">Invested</div><div class="m-val m-invested">—</div></div>
+          <div class="metric star"><div class="m-label">★ Real Ending Value</div><div class="m-val m-real-end">—</div></div>
+          <div class="metric"><div class="m-label">Nominal Ending Value</div><div class="m-val m-nom-end">—</div></div>
+          <div class="metric"><div class="m-label">Price Only (Real)</div><div class="m-val m-price-only">—</div></div>
+          <div class="metric"><div class="m-label">Dividend Growth (Real)</div><div class="m-val">3.3×</div></div>
+          <div class="metric"><div class="m-label">Holding Period</div><div class="m-val">38 years</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-row"><div class="bar-label">Nominal TR</div><div class="bar-track"><div class="bar-fill gold"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Real TR ★</div><div class="bar-track"><div class="bar-fill green"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Price Only</div><div class="bar-track"><div class="bar-fill teal"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Invested</div><div class="bar-track"><div class="bar-fill muted"></div></div><div class="bar-val">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6: 2000 -->
+    <div class="card anim" data-scenario="6">
+      <div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="card-num">6</div>
+        <div class="card-info">
+          <div class="card-title">Dot-Com Bubble Peak · Jan 2000</div>
+          <div class="card-peak">Peak before −49% crash over 2.5 years</div>
+        </div>
+        <div class="card-invested"><div class="ci-label">Invested</div><div class="ci-val">—</div></div>
+        <div class="card-result"><div class="cr-label">★ Real Value</div><div class="cr-val">—</div></div>
+        <div class="chevron">▸</div>
+      </div>
+      <div class="card-body">
+        <div class="conversion-note">Invested <span class="conv-scaled">—</span> (CPI <span class="conv-cpi-s">—</span> → <span class="conv-cpi-e">—</span>) — equivalent purchasing power of <span class="inv-ref"></span> today.</div>
+        <div class="narrative">The NASDAQ fell 78%. Individual tech stocks lost 90–99%. Valuation metrics were said to be obsolete. They weren't. The hardest entry point on this list — yet still profitable over 25 years.</div>
+        <div class="pain-box"><strong>The Pain</strong>S&amp;P 500 didn't reclaim Jan 2000 levels until 2007 — then immediately crashed again. On a real basis, still underwater in 2012. A 12-year price drought.</div>
+        <div class="metrics-grid">
+          <div class="metric"><div class="m-label">Invested</div><div class="m-val m-invested">—</div></div>
+          <div class="metric star"><div class="m-label">★ Real Ending Value</div><div class="m-val m-real-end">—</div></div>
+          <div class="metric"><div class="m-label">Nominal Ending Value</div><div class="m-val m-nom-end">—</div></div>
+          <div class="metric"><div class="m-label">Price Only (Real)</div><div class="m-val m-price-only">—</div></div>
+          <div class="metric"><div class="m-label">Dividend Growth (Real)</div><div class="m-val">2.5×</div></div>
+          <div class="metric"><div class="m-label">Holding Period</div><div class="m-val">26 years</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-row"><div class="bar-label">Nominal TR</div><div class="bar-track"><div class="bar-fill gold"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Real TR ★</div><div class="bar-track"><div class="bar-fill green"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Price Only</div><div class="bar-track"><div class="bar-fill teal"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Invested</div><div class="bar-track"><div class="bar-fill muted"></div></div><div class="bar-val">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 7: 2007 -->
+    <div class="card anim" data-scenario="7">
+      <div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="card-num">7</div>
+        <div class="card-info">
+          <div class="card-title">Housing Bubble Peak · Oct 2007</div>
+          <div class="card-peak">Peak before −57% financial crisis</div>
+        </div>
+        <div class="card-invested"><div class="ci-label">Invested</div><div class="ci-val">—</div></div>
+        <div class="card-result"><div class="cr-label">★ Real Value</div><div class="cr-val">—</div></div>
+        <div class="chevron">▸</div>
+      </div>
+      <div class="card-body">
+        <div class="conversion-note">Invested <span class="conv-scaled">—</span> (CPI <span class="conv-cpi-s">—</span> → <span class="conv-cpi-e">—</span>) — equivalent purchasing power of <span class="inv-ref"></span> today.</div>
+        <div class="narrative">The Global Financial Crisis. Lehman Brothers collapsed. The banking system nearly failed. Many serious analysts believed capitalism itself was at risk.</div>
+        <div class="pain-box"><strong>The Pain</strong>−57% decline. The S&amp;P 500 didn't reclaim Oct 2007 highs until March 2013 — 5.5 years later.</div>
+        <div class="metrics-grid">
+          <div class="metric"><div class="m-label">Invested</div><div class="m-val m-invested">—</div></div>
+          <div class="metric star"><div class="m-label">★ Real Ending Value</div><div class="m-val m-real-end">—</div></div>
+          <div class="metric"><div class="m-label">Nominal Ending Value</div><div class="m-val m-nom-end">—</div></div>
+          <div class="metric"><div class="m-label">Price Only (Real)</div><div class="m-val m-price-only">—</div></div>
+          <div class="metric"><div class="m-label">Dividend Growth (Real)</div><div class="m-val">1.9×</div></div>
+          <div class="metric"><div class="m-label">Holding Period</div><div class="m-val">18 years</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-row"><div class="bar-label">Nominal TR</div><div class="bar-track"><div class="bar-fill gold"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Real TR ★</div><div class="bar-track"><div class="bar-fill green"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Price Only</div><div class="bar-track"><div class="bar-fill teal"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Invested</div><div class="bar-track"><div class="bar-fill muted"></div></div><div class="bar-val">—</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 8: 2020 -->
+    <div class="card anim" data-scenario="8">
+      <div class="card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="card-num">8</div>
+        <div class="card-info">
+          <div class="card-title">Pre-Pandemic Peak · Feb 2020</div>
+          <div class="card-peak">Peak before −34% COVID crash in 33 days</div>
+        </div>
+        <div class="card-invested"><div class="ci-label">Invested</div><div class="ci-val">—</div></div>
+        <div class="card-result"><div class="cr-label">★ Real Value</div><div class="cr-val">—</div></div>
+        <div class="chevron">▸</div>
+      </div>
+      <div class="card-body">
+        <div class="conversion-note">Invested <span class="conv-scaled">—</span> (CPI <span class="conv-cpi-s">—</span> → <span class="conv-cpi-e">—</span>) — equivalent purchasing power of <span class="inv-ref"></span> today.</div>
+        <div class="narrative">COVID-19 was spreading globally but markets hadn't priced it in yet. Then the fastest 30%+ decline in market history — 33 days. Lockdowns, mass unemployment, and an economy in freefall.</div>
+        <div class="pain-box"><strong>The Pain</strong>34% decline in 33 days — the fastest crash on this list. Yet the market fully recovered within 5 months, the fastest recovery in history.</div>
+        <div class="metrics-grid">
+          <div class="metric"><div class="m-label">Invested</div><div class="m-val m-invested">—</div></div>
+          <div class="metric star"><div class="m-label">★ Real Ending Value</div><div class="m-val m-real-end">—</div></div>
+          <div class="metric"><div class="m-label">Nominal Ending Value</div><div class="m-val m-nom-end">—</div></div>
+          <div class="metric"><div class="m-label">Price Only (Real)</div><div class="m-val m-price-only">—</div></div>
+          <div class="metric"><div class="m-label">Dividend Growth (Real)</div><div class="m-val">1.1×</div></div>
+          <div class="metric"><div class="m-label">Holding Period</div><div class="m-val">6 years</div></div>
+        </div>
+        <div class="bar-chart">
+          <div class="bar-row"><div class="bar-label">Nominal TR</div><div class="bar-track"><div class="bar-fill gold"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Real TR ★</div><div class="bar-track"><div class="bar-fill green"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Price Only</div><div class="bar-track"><div class="bar-fill teal"></div></div><div class="bar-val">—</div></div>
+          <div class="bar-row"><div class="bar-label">Invested</div><div class="bar-track"><div class="bar-fill muted"></div></div><div class="bar-val">—</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- cards-section -->
+</div>
+
+<!-- ── 6. CLOSING ── -->
+<section class="closing anim">
+  <div class="pullquote">Every investor with the equivalent of <span class="inv-ref"></span> in today's money who bought at the absolute peak of every major bubble — and simply held — made money. In every single case.</div>
+  <div class="tagline">The risk was never buying at the top. The risk was not buying at all.</div>
+</section>
+
+<!-- ── 7. SUMMARY TABLE ── -->
+<div class="container">
+  <div class="section-label">Summary Comparison</div>
+  <div class="summary-section anim">
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Peak / Crisis</th>
+          <th>Crash After</th>
+          <th>Invested</th>
+          <th>★ Real Value</th>
+          <th>Real TR ×</th>
+          <th>Real Div ×</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-scenario="1"><td>Sep 1929 · Great Crash</td><td>−89%</td><td class="col-teal s-invested">—</td><td class="col-gold s-real-end">—</td><td>370×</td><td>4.5×</td></tr>
+        <tr data-scenario="2"><td>Feb 1937 · Depression Rally</td><td>−60%</td><td class="col-teal s-invested">—</td><td class="col-gold s-real-end">—</td><td>347×</td><td>4.7×</td></tr>
+        <tr data-scenario="3"><td>Nov 1968 · Go-Go Era</td><td>−36%</td><td class="col-teal s-invested">—</td><td class="col-gold s-real-end">—</td><td>34×</td><td>2.8×</td></tr>
+        <tr data-scenario="4"><td>Jan 1973 · Oil Shock</td><td>−48%</td><td class="col-teal s-invested">—</td><td class="col-gold s-real-end">—</td><td>32×</td><td>3.3×</td></tr>
+        <tr data-scenario="5"><td>Aug 1987 · Black Monday</td><td>−34%</td><td class="col-teal s-invested">—</td><td class="col-gold s-real-end">—</td><td>16×</td><td>3.3×</td></tr>
+        <tr data-scenario="6"><td>Jan 2000 · Dot-Com</td><td>−49%</td><td class="col-teal s-invested">—</td><td class="col-gold s-real-end">—</td><td>4.0×</td><td>2.5×</td></tr>
+        <tr data-scenario="7"><td>Oct 2007 · Housing Bubble</td><td>−57%</td><td class="col-teal s-invested">—</td><td class="col-gold s-real-end">—</td><td>4.0×</td><td>1.9×</td></tr>
+        <tr data-scenario="8"><td>Feb 2020 · COVID</td><td>−34%</td><td class="col-teal s-invested">—</td><td class="col-gold s-real-end">—</td><td>1.8×</td><td>1.1×</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── 8. FOOTNOTE ── -->
+<div class="footnote">
+  Source: Robert Shiller, <em>Irrational Exuberance</em> dataset (irrationalexuberance.com).<br>
+  Total return assumes dividends reinvested monthly into the S&amp;P Composite index. Real values deflated by CPI-U.<br>
+  Data through <strong id="data-end">Mar 2026</strong>. This is not investment advice.
+</div>
+
+<!-- ── INIT ── -->
+<script>
+document.getElementById('data-end').textContent = FACTORS.data_end_str;
+
+// IntersectionObserver for scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.15 });
+document.querySelectorAll('.anim').forEach(el => observer.observe(el));
+
+// Initial render
+render();
+</script>
+</body>
+</html>
