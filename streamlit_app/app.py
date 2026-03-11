@@ -652,7 +652,7 @@ with tab1:
             "Investment amount (today's dollars)",
             min_value=1000,
             max_value=100_000_000,
-            value=250_000,
+            value=100_000,
             step=10_000,
             format="%d",
             key="investment_top",
