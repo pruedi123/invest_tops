@@ -550,7 +550,7 @@ SCENARIOS = [
      "narrative": "By early 1937, GDP had returned to 1929 levels. The Dow had recovered 80% from the lows. At his second inaugural on January 20, FDR declared: \"Our progress out of the depression is obvious.\" Then the Fed doubled reserve requirements, FDR cut spending to balance the budget, and stocks crashed 60%. Investors who had just survived the Great Crash were crushed again.",
      "pain": "Two consecutive crashes within a decade. Industrial production dropped 37%. Unemployment surged from 14% back to 19%. Congressman Maury Maverick said: \"We have pulled all the rabbits out of the hat, and there are no more rabbits.\" Even Treasury Secretary Morgenthau privately admitted: \"We have tried spending money... it does not work.\" It took until 1945 to break even on price alone.",
      "quote": "There is no real and fundamental basis upon which to build enduring prosperity. We are now helplessly floundering.",
-     "quote_attr": "Commercial &amp; Financial Chronicle — Apr 2, 1938, near the market bottom"},
+     "quote_attr": "Commercial &amp; Financial Chronicle — Apr 2, 1938, the exact month of the market bottom"},
     {"num": 3, "label": "Go-Go Era Peak", "short": "Go-Go Era", "date": 1968.11, "crash": "−36%", "peak_desc": "Peak before the stagflation decade",
      "narrative": 'The "Nifty Fifty" era — glamour stocks at any price. Then oil shocks, Vietnam, Nixon\'s resignation, and 15% inflation. The 1970s were the worst decade for real returns in market history.',
      "pain": "Real inflation-adjusted losses persisted for over a decade. By 1982, purchasing power was still negative vs. the 1968 entry. A brutal 14-year grind.",
