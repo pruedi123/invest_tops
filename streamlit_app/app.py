@@ -542,10 +542,10 @@ def fmt_x(n):
 # ── Scenario definitions ──
 SCENARIOS = [
     {"num": 1, "label": "The Great Crash", "short": "Great Crash", "date": 1929.09, "crash": "−89%", "peak_desc": "Peak before −89% collapse",
-     "narrative": '"The market will never recover." The Dow didn\'t reclaim its 1929 high until 1954 — 25 years later. And yet, with dividends reinvested, the patient investor went on to extraordinary wealth.',
+     "narrative": 'Just days before the crash, Irving Fisher declared that stocks had reached "a permanently high plateau." The Dow didn\'t reclaim its 1929 high until 1954 — 25 years later. And yet, with dividends reinvested, the patient investor went on to extraordinary wealth.',
      "pain": "Market fell 89% peak-to-trough. By 1932, the investment had shrunk to ~20¢ on the dollar. Most investors sold in panic and locked in permanent losses.",
-     "quote": "Stock prices have reached what looks like a permanently high plateau.",
-     "quote_attr": "Irving Fisher, New York Times — Oct 16, 1929"},
+     "quote": "I now see nothing to give ground to hope — nothing of man.",
+     "quote_attr": "Calvin Coolidge, former U.S. President — 1933, near the market bottom"},
     {"num": 2, "label": "Depression-Era Rally Peak", "short": "Depression Rally", "date": 1937.02, "crash": "−60%", "peak_desc": "Peak before −60% plunge",
      "narrative": "Markets had recovered 80% from the Depression lows by 1937 — then the Fed tightened prematurely, sending stocks down another 60%. Investors who'd just returned were crushed again.",
      "pain": "Two consecutive crashes within a decade. It took until 1945 to break even on price alone.",
