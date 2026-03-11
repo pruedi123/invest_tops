@@ -567,7 +567,7 @@ SCENARIOS = [
      "quote": "The Death of Equities: How Inflation Is Destroying the Stock Market",
      "quote_attr": "BusinessWeek cover story — Aug 13, 1979"},
     {"num": 6, "label": "Black Monday Peak", "short": "Black Monday", "date": 1987.08, "crash": "−34%", "peak_desc": "Peak before −34% crash in 77 days",
-     "narrative": "On October 19, 1987, the Dow fell 22.6% in a single day — the largest one-day drop in history. The market had been \"too high\" for months. It fully recovered within 2 years.",
+     "narrative": "In September 1987, Robert Prechter — the most famous market guru of the decade — predicted the Dow would reach 3,600 from 2,660. Six weeks later, on October 19, the Dow fell 22.6% in a single day — the largest one-day drop in history. The Wall Street Journal's front page the next morning drew direct comparisons to 1929. The market fully recovered within 2 years.",
      "pain": None,
      "quote": "Does 1987 Equal 1929?",
      "quote_attr": "New York Times, front page — Oct 20, 1987"},
