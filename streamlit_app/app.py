@@ -678,7 +678,7 @@ with tab1:
     # Hero
     st.markdown('<div class="eyebrow">S&P 500 · Shiller CAPE Data · Total Return With Dividends Reinvested</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-title">What If You Bought At The <em>Very Top?</em></div>', unsafe_allow_html=True)
-    st.markdown('<div style="text-align:center;font-family:\'Cormorant Garamond\',serif;font-size:16px;color:var(--muted);margin-bottom:24px">By <strong style="color:var(--text)">Paul Ruedi</strong></div>', unsafe_allow_html=True)
+    st.markdown('<div style="text-align:center;font-family:Cormorant Garamond,serif;font-size:20px;color:var(--muted);margin-bottom:28px;letter-spacing:1px">An Interactive Analysis by <strong style="color:var(--text);font-size:22px">Paul Ruedi</strong></div>', unsafe_allow_html=True)
 
     # Investment input — preset buttons use callbacks to set state BEFORE the widget renders
     def set_preset(val):
@@ -868,7 +868,8 @@ with tab1:
 
     # Footnote
     st.markdown(
-        f'<div class="footnote-text">Created by Paul Ruedi<br>'
+        f'<div style="text-align:center;font-family:Cormorant Garamond,serif;font-size:16px;color:var(--text);margin-bottom:12px;font-weight:600">Research &amp; Analysis by Paul Ruedi</div>'
+        f'<div class="footnote-text">'
         f'Source: Robert Shiller, <em>Irrational Exuberance</em> dataset · '
         f'irrationalexuberance.com · S&P 500 monthly data with dividends reinvested · '
         f'CPI-adjusted to constant purchasing power · Data through {data_end_str}</div>',
