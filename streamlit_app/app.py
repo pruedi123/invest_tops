@@ -919,8 +919,8 @@ with tab2:
             "Investment amount ($)",
             min_value=100,
             max_value=100_000_000,
-            value=10_000,
-            step=1_000,
+            value=100_000,
+            step=10_000,
             format="%d",
             key="investment_single",
         )
