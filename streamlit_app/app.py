@@ -877,6 +877,24 @@ with tab1:
     table_html += "</tbody></table>"
     st.markdown(table_html, unsafe_allow_html=True)
 
+    # Plain-English explanation using the most recent scenario (COVID)
+    covid = results[-1]
+    st.markdown(
+        f'<div class="method-box" style="margin-top:32px;border-color:var(--gold)">'
+        f'<h3 style="color:var(--gold)">What Does "{fmt_x(covid["real_tr_f"])}" Real Return Mean?</h3>'
+        f'<p style="font-size:15px;line-height:1.8">Take the Pre-Pandemic Peak as an example. '
+        f'The Real Total Return Factor is <strong style="color:var(--gold)">{fmt_x(covid["real_tr_f"])}</strong>. '
+        f'That means whatever your money could buy in {covid["start_str"]} — a car, a vacation, a month of groceries — '
+        f'your investment can now buy <strong style="color:var(--gold)">{fmt_x(covid["real_tr_f"])}</strong> as much. '
+        f'Not {fmt_x(covid["real_tr_f"])} as many dollars. {fmt_x(covid["real_tr_f"])} as much <em>stuff</em>. '
+        f'All price increases have already been stripped out.</p>'
+        f'<p style="font-size:15px;line-height:1.8;margin-top:10px">The same logic applies to every scenario on this page. '
+        f'The 1929 investor\'s {fmt_x(results[0]["real_tr_f"])} factor means every dollar of purchasing power they invested '
+        f'can now buy {fmt_x(results[0]["real_tr_f"])} as much as it could in {results[0]["start_str"]}.</p>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
     # Footnote
     st.markdown(
         f'<div style="text-align:center;font-family:Cormorant Garamond,serif;font-size:16px;color:var(--text);margin-bottom:12px;font-weight:600">'
@@ -1014,6 +1032,19 @@ with tab2:
         bars_html += render_bar("Invested", r["scaled"], max_val, "bar-fill-muted")
         bars_html += '</div>'
         st.markdown(bars_html, unsafe_allow_html=True)
+
+        # Plain-English explanation
+        st.markdown(
+            f'<div class="method-box" style="margin-top:24px;border-color:var(--gold)">'
+            f'<h3 style="color:var(--gold)">What Does "{fmt_x(r["real_tr_f"])}" Real Return Mean?</h3>'
+            f'<p style="font-size:15px;line-height:1.8">Whatever your money could buy in {r["start_str"]} — '
+            f'a car, a vacation, a month of groceries — your investment can now buy '
+            f'<strong style="color:var(--gold)">{fmt_x(r["real_tr_f"])}</strong> as much. '
+            f'Not {fmt_x(r["real_tr_f"])} as many dollars. {fmt_x(r["real_tr_f"])} as much <em>stuff</em>. '
+            f'All price increases over the past {r["years"]} years have already been stripped out.</p>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
 
         # Footnote
         st.markdown(
