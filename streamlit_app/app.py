@@ -915,6 +915,16 @@ with tab2:
             target_date = year + month_num / 100
 
     with col2:
+        def set_single_preset(val):
+            st.session_state.investment_single = val
+
+        single_preset_cols = st.columns(5)
+        single_presets = [10_000, 50_000, 100_000, 500_000, 1_000_000]
+        single_preset_labels = ["$10K", "$50K", "$100K", "$500K", "$1M"]
+        for i, (col, val, label) in enumerate(zip(single_preset_cols, single_presets, single_preset_labels)):
+            with col:
+                st.button(label, key=f"single_preset_{val}", use_container_width=True,
+                          on_click=set_single_preset, args=(val,))
         single_investment = st.number_input(
             "Investment amount ($)",
             min_value=100,
