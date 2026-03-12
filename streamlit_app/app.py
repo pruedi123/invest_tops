@@ -678,7 +678,17 @@ with tab1:
     # Hero
     st.markdown('<div class="eyebrow">S&P 500 · Shiller CAPE Data · Total Return With Dividends Reinvested</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-title">What If You Bought At The <em>Very Top?</em></div>', unsafe_allow_html=True)
-    st.markdown('<div style="text-align:center;font-family:Cormorant Garamond,serif;font-size:20px;color:var(--muted);margin-bottom:28px;letter-spacing:1px">An Interactive Analysis by <strong style="color:var(--text);font-size:22px">Paul Ruedi</strong></div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div style="text-align:center;margin-bottom:32px">'
+        '<div style="font-family:Cormorant Garamond,serif;font-size:22px;color:var(--text);font-weight:700;margin-bottom:4px">Paul Ruedi</div>'
+        '<div style="font-family:DM Mono,monospace;font-size:13px;color:var(--muted);line-height:1.7">'
+        'CEO, Ruedi Wealth Management, Inc.<br>'
+        'A $500,000,000 Investment Advisory &amp; Retirement Planning Firm<br>'
+        'Champaign, IL · <a href="https://www.ruediwealth.com" style="color:var(--teal);text-decoration:none">ruediwealth.com</a>'
+        ' · <a href="mailto:paulruedi@ruediwealth.com" style="color:var(--teal);text-decoration:none">paulruedi@ruediwealth.com</a>'
+        '</div></div>',
+        unsafe_allow_html=True,
+    )
 
     # Investment input — preset buttons use callbacks to set state BEFORE the widget renders
     def set_preset(val):
@@ -868,7 +878,9 @@ with tab1:
 
     # Footnote
     st.markdown(
-        f'<div style="text-align:center;font-family:Cormorant Garamond,serif;font-size:16px;color:var(--text);margin-bottom:12px;font-weight:600">Research &amp; Analysis by Paul Ruedi</div>'
+        f'<div style="text-align:center;font-family:Cormorant Garamond,serif;font-size:16px;color:var(--text);margin-bottom:12px;font-weight:600">'
+        f'Research &amp; Analysis by Paul Ruedi · CEO, Ruedi Wealth Management, Inc. · '
+        f'<a href="https://www.ruediwealth.com" style="color:var(--teal);text-decoration:none">ruediwealth.com</a></div>'
         f'<div class="footnote-text">'
         f'Source: Robert Shiller, <em>Irrational Exuberance</em> dataset · '
         f'irrationalexuberance.com · S&P 500 monthly data with dividends reinvested · '
