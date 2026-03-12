@@ -714,9 +714,10 @@ with tab1:
         )
 
     st.markdown(
-        f'<div class="hero-subtitle">Every generation believes the market is overvalued and ready to crash. '
+        f'<div class="hero-subtitle">"Every generation believes the market is overvalued and ready to crash. '
         f'Here is what actually happened to someone with the equivalent of <strong>{fmt(investment)}</strong> in today\'s money '
-        f'who bought at the absolute peak of every major bubble — and simply held.</div>',
+        f'who bought at the absolute peak of every major bubble — and simply held."'
+        f'<br><span style="font-style:normal;font-size:14px;color:var(--muted)">— Paul Ruedi</span></div>',
         unsafe_allow_html=True,
     )
 
