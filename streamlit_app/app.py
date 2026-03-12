@@ -578,7 +578,7 @@ SCENARIOS = [
      "quote_attr": "Bill Gross, PIMCO ($270B under management) — Sep 2002, one month before the exact bottom"},
     {"num": 8, "label": "Housing Bubble Peak", "short": "Housing Bubble", "date": 2007.10, "crash": "−57%", "peak_desc": "Peak before −57% financial crisis",
      "narrative": "In March 2007, Fed Chair Ben Bernanke told Congress the subprime crisis \"seems likely to be contained.\" Citigroup CEO Chuck Prince said \"as long as the music is playing, you've got to get up and dance.\" In March 2008, Jim Cramer told viewers: \"Bear Stearns is not in trouble. Don't move your money from Bear.\" The stock was at $62. Five days later it sold for $2.<br><br>Lehman Brothers collapsed. AIG needed a $182 billion bailout. The banking system nearly failed. Many serious analysts believed capitalism itself was at risk.",
-     "pain": "−57% decline. The S&P 500 didn't reclaim Oct 2007 highs until March 2013 — 5.5 years later.",
+     "pain": "−57% decline. The S&P 500 didn't reclaim Oct 2007 highs until March 2013 — 5.5 years later. On October 6, 2008, Jim Cramer went on the Today show and told millions of viewers: \"Whatever money you may need for the next five years, please take it out of the stock market right now, this week.\" The S&amp;P was at 1,056. It bottomed five months later — then more than tripled.",
      "quote": "It is highly likely it goes to 600 or below.",
      "quote_attr": "Nouriel Roubini, Mar 9, 2009 — the exact day of the market bottom"},
     {"num": 9, "label": "Pre-Pandemic Peak", "short": "COVID", "date": 2020.02, "crash": "−34%", "peak_desc": "Peak before −34% COVID crash in 33 days",
