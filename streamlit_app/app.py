@@ -903,14 +903,14 @@ with tab2:
     col1, col2 = st.columns(2)
 
     with col1:
-        input_mode = st.radio("Choose input method", ["Historical event", "Custom date"], horizontal=True)
+        input_mode = st.radio("Choose input method", ["Historical event", "Custom date"], horizontal=True, index=1)
 
         if input_mode == "Historical event":
             event = st.selectbox("Select an event", list(DATE_ALIASES.keys()))
             target_date = DATE_ALIASES[event]
         else:
-            year = st.number_input("Year", min_value=1871, max_value=2026, value=2000)
-            month = st.selectbox("Month", MONTHS, index=0)
+            year = st.number_input("Year", min_value=1871, max_value=2026, value=1959)
+            month = st.selectbox("Month", MONTHS, index=10)
             month_num = MONTHS.index(month) + 1
             target_date = year + month_num / 100
 
