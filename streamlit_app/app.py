@@ -667,8 +667,75 @@ with st.sidebar:
         load_shiller.clear()
         st.rerun()
 
+# ── War scenarios ──
+WAR_SCENARIOS = [
+    {"num": 1, "label": "World War I", "short": "WWI", "date": 1914.07,
+     "desc": "Austria-Hungary declared war on Serbia July 28; general war by August",
+     "narrative": "The 'war to end all wars' killed 20 million people and redrew the map of Europe. Markets closed for months. The New York Stock Exchange shut down from July 31 to December 12, 1914 — the longest closure in its history. Yet the war economy ultimately fueled American industrial dominance for the next century."},
+    {"num": 2, "label": "Russian Civil War", "short": "Russian Civil War", "date": 1917.11,
+     "desc": "Bolshevik Revolution and civil war began November 1917",
+     "narrative": "The Bolsheviks seized power, pulled Russia out of WWI, and plunged the former empire into a civil war that killed millions. Western investors feared the revolutionary wave would spread. It didn't — and the U.S. economy roared into the 1920s."},
+    {"num": 3, "label": "Spanish Civil War", "short": "Spanish Civil War", "date": 1936.07,
+     "desc": "Military coup against the Spanish Republic, July 1936",
+     "narrative": "A dress rehearsal for World War II. Hitler and Mussolini backed Franco; the Soviets backed the Republic. For three years, Europe watched a brutal preview of what was coming — and markets knew it."},
+    {"num": 4, "label": "Second Sino-Japanese War", "short": "Sino-Japanese", "date": 1937.07,
+     "desc": "Full-scale Japanese invasion of China, July 1937",
+     "narrative": "Japan's full-scale invasion of China killed an estimated 15–20 million Chinese civilians. It merged into World War II and reshaped the entire Pacific. American investors watched Asia descend into total war."},
+    {"num": 5, "label": "World War II", "short": "WWII", "date": 1939.09,
+     "desc": "Germany invaded Poland September 1, 1939",
+     "narrative": "The deadliest conflict in human history — 70–85 million dead. When Germany invaded Poland, investors had every reason to believe civilization itself was at risk. The Dow fell 30% in 1940 as France fell. Yet someone who invested in September 1939 and held rode the greatest economic expansion in history."},
+    {"num": 6, "label": "Korean War", "short": "Korea", "date": 1950.06,
+     "desc": "North Korea invaded South Korea, June 25, 1950",
+     "narrative": "Just five years after WWII, another major war — this time with the real threat of nuclear escalation. General MacArthur wanted to use atomic bombs on China. The Dow dropped 12% in three weeks. Truman fired MacArthur. The war ground on for three years."},
+    {"num": 7, "label": "Vietnam War", "short": "Vietnam", "date": 1955.11,
+     "desc": "Conventional start date; major U.S. escalation after Gulf of Tonkin, Aug 1964",
+     "narrative": "America's longest war (at the time) tore the country apart. 58,000 Americans killed. Massive government spending fueled inflation that poisoned markets for a decade. The war's economic aftermath — stagflation — was arguably worse for investors than the war itself."},
+    {"num": 8, "label": "Six-Day War", "short": "Six-Day War", "date": 1967.06,
+     "desc": "Israel vs. Egypt, Jordan, and Syria — June 5–10, 1967",
+     "narrative": "In six days, Israel defeated three armies and tripled its territory. The war reshaped Middle Eastern politics permanently and set the stage for the oil weapon that OPEC would deploy six years later."},
+    {"num": 9, "label": "Yom Kippur War", "short": "Yom Kippur", "date": 1973.10,
+     "desc": "Egypt and Syria attacked Israel, October 6, 1973",
+     "narrative": "A surprise attack on the holiest day of the Jewish calendar. The U.S. airlifted weapons to Israel; Arab nations retaliated with an oil embargo. Oil prices quadrupled. The S&P 500 fell 48% over the next year. Investing at this moment felt suicidal."},
+    {"num": 10, "label": "Iran-Iraq War", "short": "Iran-Iraq", "date": 1980.09,
+     "desc": "Iraq invaded Iran, September 22, 1980",
+     "narrative": "An eight-year war between two major oil producers. A million casualties. Oil prices spiked. Combined with Volcker's interest rate shock (the Fed funds rate hit 20%), investors faced war abroad and recession at home."},
+    {"num": 11, "label": "Falklands War", "short": "Falklands", "date": 1982.04,
+     "desc": "Argentina invaded the Falkland Islands, April 2, 1982",
+     "narrative": "Argentina invaded British territory in the South Atlantic. Britain sent a naval task force 8,000 miles to take them back. A short, sharp conflict — but it came during one of the worst bear markets of the century. Stocks had been punishing investors since 1968."},
+    {"num": 12, "label": "Gulf War", "short": "Gulf War", "date": 1990.08,
+     "desc": "Iraq invaded Kuwait, August 2, 1990; coalition counterattack January 1991",
+     "narrative": "Saddam Hussein invaded Kuwait and threatened Saudi Arabia — a quarter of the world's oil supply was at risk. Oil doubled overnight. The S&P fell 20% in three months. Pundits warned of a prolonged Middle Eastern quagmire. The coalition liberated Kuwait in 100 hours."},
+    {"num": 13, "label": "Bosnian War", "short": "Bosnia", "date": 1992.04,
+     "desc": "War erupted in Bosnia-Herzegovina, April 1992",
+     "narrative": "The worst conflict in Europe since WWII. Ethnic cleansing, the siege of Sarajevo, and the Srebrenica massacre shocked the world. For three years, war raged in the heart of Europe while many wondered if NATO and the post-Cold War order would hold."},
+    {"num": 14, "label": "Kosovo War", "short": "Kosovo", "date": 1998.02,
+     "desc": "Armed conflict in Kosovo began February 1998; NATO bombing March 1999",
+     "narrative": "Another Balkan crisis. Serbian forces launched ethnic cleansing; NATO responded with a 78-day bombing campaign — the alliance's first major combat operation. Markets barely flinched. The dot-com boom was in full swing."},
+    {"num": 15, "label": "War in Afghanistan", "short": "Afghanistan", "date": 2001.10,
+     "desc": "U.S. invasion began October 7, 2001 — one month after 9/11",
+     "narrative": "America's response to 9/11. The longest war in U.S. history — 20 years. When it began, the country was reeling from the worst terrorist attack on American soil, the dot-com bust, and a recession. Investing felt reckless."},
+    {"num": 16, "label": "Iraq War", "short": "Iraq War", "date": 2003.03,
+     "desc": "U.S. invasion of Iraq began March 20, 2003",
+     "narrative": "\"Shock and Awe.\" The U.S. invaded Iraq to remove Saddam Hussein. The war would last nearly nine years, cost trillions, and remain deeply controversial. Markets had already been falling for three years. This felt like piling crisis on crisis."},
+    {"num": 17, "label": "Russo-Georgian War", "short": "Russo-Georgian", "date": 2008.08,
+     "desc": "Russia invaded Georgia, August 8, 2008",
+     "narrative": "Russia's first military invasion of a neighboring country since the Soviet era. It lasted five days but signaled a new era of Russian aggression. Investors were already watching the subprime crisis unfold — Lehman Brothers would collapse one month later."},
+    {"num": 18, "label": "Libyan Civil War", "short": "Libya", "date": 2011.02,
+     "desc": "Uprising against Gaddafi began February 2011",
+     "narrative": "Part of the Arab Spring. NATO intervened with airstrikes. Gaddafi was overthrown and killed. Oil prices spiked above $120 as a major producer descended into chaos that continues to this day."},
+    {"num": 19, "label": "Syrian Civil War", "short": "Syria", "date": 2011.03,
+     "desc": "Protests escalated to armed conflict, March 2011",
+     "narrative": "What began as Arab Spring protests became the deadliest conflict of the 21st century — over 500,000 dead and millions displaced. ISIS emerged from the chaos. Russia and Iran intervened. The refugee crisis reshaped European politics."},
+    {"num": 20, "label": "Russian Invasion of Ukraine", "short": "Ukraine", "date": 2022.02,
+     "desc": "Full-scale Russian invasion began February 24, 2022",
+     "narrative": "The largest land war in Europe since 1945. Nuclear threats from Putin. Energy crisis across Europe. Global food supply disruption. Markets dropped sharply as investors priced in the possibility of a wider conflict."},
+    {"num": 21, "label": "Israel-Hamas War", "short": "Israel-Hamas", "date": 2023.10,
+     "desc": "Hamas attacked Israel October 7, 2023",
+     "narrative": "The deadliest day in Israeli history. A regional escalation threatened to engulf the Middle East. Oil markets spiked on fears of Iranian involvement. Investors braced for a wider war that could disrupt global energy supplies."},
+]
+
 # ── Navigation ──
-tab1, tab2 = st.tabs(["📈 Bought at the Top", "🔍 Single Date Query"])
+tab1, tab2, tab3 = st.tabs(["📈 Bought at the Top", "⚔️ Invested When Wars Started", "🔍 Single Date Query"])
 
 
 # ═══════════════════════════════════════════
@@ -909,9 +976,197 @@ with tab1:
 
 
 # ═══════════════════════════════════════════
-#  TAB 2: SINGLE DATE QUERY
+#  TAB 2: INVESTED WHEN WARS STARTED
 # ═══════════════════════════════════════════
 with tab2:
+    st.markdown('<div class="eyebrow">S&P 500 · Shiller CAPE Data · Total Return With Dividends Reinvested</div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-title">What If You Invested When <em>Wars Started?</em></div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div style="text-align:center;margin-bottom:32px">'
+        '<div style="font-family:Cormorant Garamond,serif;font-size:22px;color:var(--text);font-weight:700;margin-bottom:4px">Paul Ruedi</div>'
+        '<div style="font-family:DM Mono,monospace;font-size:13px;color:var(--muted);line-height:1.7">'
+        'CEO, Ruedi Wealth Management, Inc.<br>'
+        'A $500,000,000 Investment Advisory &amp; Retirement Planning Firm<br>'
+        'Champaign, IL · <a href="https://www.ruediwealth.com" style="color:var(--teal);text-decoration:none">ruediwealth.com</a>'
+        ' · <a href="mailto:paulruedi@ruediwealth.com" style="color:var(--teal);text-decoration:none">paulruedi@ruediwealth.com</a>'
+        '</div></div>',
+        unsafe_allow_html=True,
+    )
+
+    # Investment input
+    def set_war_preset(val):
+        st.session_state.investment_war = val
+
+    col_spacer1, col_input, col_spacer2 = st.columns([1, 2, 1])
+    with col_input:
+        war_preset_cols = st.columns(5)
+        war_presets = [10_000, 50_000, 100_000, 500_000, 1_000_000]
+        war_preset_labels = ["$10K", "$50K", "$100K", "$500K", "$1M"]
+        for i, (col, val, label) in enumerate(zip(war_preset_cols, war_presets, war_preset_labels)):
+            with col:
+                st.button(label, key=f"war_preset_{val}", use_container_width=True,
+                          on_click=set_war_preset, args=(val,))
+        war_investment = st.number_input(
+            "Investment amount (today's dollars)",
+            min_value=1000,
+            max_value=100_000_000,
+            value=100_000,
+            step=10_000,
+            format="%d",
+            key="investment_war",
+        )
+
+    st.markdown(
+        f'<div class="hero-subtitle">"Wars are the ultimate test of investor nerve. Every major conflict of the past century '
+        f'triggered panic, uncertainty, and predictions of economic collapse. Here is what actually happened to someone with the equivalent '
+        f'of <strong>{fmt(war_investment)}</strong> in today\'s money who invested in the S&amp;P 500 the month each war began — and simply held."'
+        f'<br><span style="font-style:normal;font-size:14px;color:var(--muted)">— Paul Ruedi</span></div>',
+        unsafe_allow_html=True,
+    )
+
+    # Compute all war scenarios
+    war_results = []
+    for s in WAR_SCENARIOS:
+        r = analyze(s["date"], war_investment, rows)
+        war_results.append(r)
+
+    # Fear Bar
+    st.markdown("""
+    <div class="fear-bar">
+        <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+            <div style="font-size:28px;flex-shrink:0">⚔️</div>
+            <div style="flex:1;min-width:0">
+                <div class="fear-header">THE HEADLINE AT EVERY WAR'S OUTBREAK</div>
+                <div class="fear-text">"This changes everything." · "The economy can't survive this." · "Get out of stocks now." · Every war brought genuine terror, real casualties, and dire predictions for markets. Every single time, the long-term investor who stayed the course came out ahead.</div>
+            </div>
+            <div class="fear-badge">WARS END. MARKETS DON'T.</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Scenario Cards
+    st.markdown(f'<div class="section-label">{len(WAR_SCENARIOS)} Wars · {len(WAR_SCENARIOS)} Investments · One Result</div>', unsafe_allow_html=True)
+
+    for s, r in zip(WAR_SCENARIOS, war_results):
+        scaled = r["scaled"]
+        real_end = r["real_end"]
+        nom_end = r["nom_end"]
+        price_only = r["price_only"]
+        max_val = max(real_end, nom_end, price_only, scaled)
+
+        # Card header
+        st.markdown(f"""
+        <div class="scenario-card">
+            <div class="card-header-row">
+                <div class="card-num">{s['num']}</div>
+                <div style="flex:1;min-width:0">
+                    <div class="card-title">{s['label']} · {r['start_str']}</div>
+                    <div class="card-peak">{s['desc']}</div>
+                </div>
+                <div style="text-align:right;margin-right:8px">
+                    <div class="card-val-label">Invested</div>
+                    <div class="card-invested-val">{fmt(scaled)}</div>
+                </div>
+                <div style="text-align:right">
+                    <div class="card-val-label">★ Real Value</div>
+                    <div class="card-result-val">{fmt(real_end)}</div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Expandable details
+        with st.expander(f"Details: {s['label']} · {r['start_str']}"):
+            st.markdown(
+                f'<div class="conversion-note">Invested <strong>{fmt(scaled)}</strong> '
+                f'(CPI {r["cpi_start"]} → {r["cpi_end"]}) — equivalent purchasing power of '
+                f'<strong>{fmt(war_investment)}</strong> today.</div>',
+                unsafe_allow_html=True,
+            )
+
+            st.markdown(f'<div class="narrative">{s["narrative"]}</div>', unsafe_allow_html=True)
+
+            # Metrics grid
+            m_cols = st.columns(3)
+            metrics = [
+                ("Invested", fmt(scaled), "teal"),
+                ("★ Real Ending Value", fmt(real_end), "gold"),
+                ("Nominal Ending Value", fmt(nom_end), ""),
+                ("Price Only (Real)", fmt(price_only), ""),
+                ("Dividend Growth (Real)", fmt_x(r["div_real_f"]), ""),
+                ("Holding Period", f'{r["years"]} years', ""),
+            ]
+            for j, (label, val, color) in enumerate(metrics):
+                with m_cols[j % 3]:
+                    css_class = f"metric-val {color}" if color else "metric-val"
+                    st.markdown(f"""
+                    <div class="metric-card">
+                        <div class="metric-label">{label}</div>
+                        <div class="{css_class}">{val}</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+            # Bar chart
+            bars_html = '<div class="bar-container">'
+            bars_html += render_bar("Nominal TR", nom_end, max_val, "bar-fill-gold")
+            bars_html += render_bar("Real TR ★", real_end, max_val, "bar-fill-green")
+            bars_html += render_bar("Price Only", price_only, max_val, "bar-fill-teal")
+            bars_html += render_bar("Invested", scaled, max_val, "bar-fill-muted")
+            bars_html += '</div>'
+            st.markdown(bars_html, unsafe_allow_html=True)
+
+    # Closing
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="closing-quote">Every investor with the equivalent of {fmt(war_investment)} in today\'s money '
+        f'who invested when wars broke out — during the most frightening geopolitical moments of the past century — '
+        f'and simply held, made money. In every single case.</div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<div class="closing-tagline">"Wars end. Recessions end. Bear markets end. Exposed long-term returns to the S&P 500 never have."<br>'
+        '<span style="font-size:14px;color:var(--muted);font-style:normal">— Paul Ruedi</span></div>',
+        unsafe_allow_html=True,
+    )
+
+    # Summary table
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<div class="section-label">Summary Comparison</div>', unsafe_allow_html=True)
+
+    table_html = '<table class="summary-table"><thead><tr>'
+    table_html += "<th>War</th><th>Started</th><th>Invested</th>"
+    table_html += "<th>★ Real Value</th><th>Real TR Factor</th><th>Real Div Factor</th><th>Years</th>"
+    table_html += "</tr></thead><tbody>"
+    for s, r in zip(WAR_SCENARIOS, war_results):
+        table_html += (
+            f'<tr><td>{s["short"]}</td>'
+            f'<td>{r["start_str"]}</td>'
+            f'<td class="col-teal">{fmt(r["scaled"])}</td>'
+            f'<td class="col-gold">{fmt(r["real_end"])}</td>'
+            f'<td>{fmt_x(r["real_tr_f"])}</td>'
+            f'<td>{fmt_x(r["div_real_f"])}</td>'
+            f'<td>{r["years"]}</td></tr>'
+        )
+    table_html += "</tbody></table>"
+    st.markdown(table_html, unsafe_allow_html=True)
+
+    # Footnote
+    st.markdown(
+        f'<div style="text-align:center;font-family:Cormorant Garamond,serif;font-size:16px;color:var(--text);margin-bottom:12px;font-weight:600;margin-top:32px">'
+        f'Research &amp; Analysis by Paul Ruedi · CEO, Ruedi Wealth Management, Inc. · '
+        f'<a href="https://www.ruediwealth.com" style="color:var(--teal);text-decoration:none">ruediwealth.com</a></div>'
+        f'<div class="footnote-text">'
+        f'Source: Robert Shiller, <em>Irrational Exuberance</em> dataset · '
+        f'irrationalexuberance.com · S&P 500 monthly data with dividends reinvested · '
+        f'CPI-adjusted to constant purchasing power · Data through {data_end_str}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+# ═══════════════════════════════════════════
+#  TAB 3: SINGLE DATE QUERY
+# ═══════════════════════════════════════════
+with tab3:
     st.markdown('<div class="hero-title" style="font-size:36px">Single Date Analysis</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="hero-subtitle">Pick any historical date or event and see what happened to an S&P 500 investment held to today.</div>',
