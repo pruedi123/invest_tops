@@ -944,6 +944,44 @@ with tab1:
     table_html += "</tbody></table>"
     st.markdown(table_html, unsafe_allow_html=True)
 
+    # Shareable visual: annualized real return per scenario
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<div class="section-label">At A Glance — Annualized Real Return</div>', unsafe_allow_html=True)
+    cagrs = [(r["real_tr_f"] ** (1.0 / r["years"]) - 1.0) if r["years"] else 0 for r in results]
+    scale_max = max(cagrs + [0.10])
+    viz = (
+        '<div style="background:#fffdf7;border:1px solid #e6dfcf;border-radius:12px;'
+        'padding:28px 32px;margin:8px 0 4px;font-family:DM Mono,monospace">'
+        '<div style="text-align:center;font-family:Cormorant Garamond,serif;font-size:22px;'
+        'color:var(--text);font-weight:700;margin-bottom:4px">'
+        'Even At The Worst Moment — What Patience Earned You</div>'
+        '<div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:22px">'
+        'Annualized real return · inflation stripped out · dividends reinvested</div>'
+    )
+    for s, r, cagr in zip(SCENARIOS, results, cagrs):
+        pct = (cagr / scale_max) * 100 if scale_max else 0
+        viz += (
+            '<div style="margin:14px 0">'
+            '<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text);margin-bottom:4px">'
+            f'<span><strong>{s["short"]}</strong> · {r["start_str"]} <span style="color:var(--muted)">({r["years"]}y)</span></span>'
+            f'<span><span style="color:var(--teal);font-weight:700">{cagr*100:.1f}% / yr</span> '
+            f'<span style="color:var(--muted)">→ {fmt_x(r["real_tr_f"])} total</span></span>'
+            '</div>'
+            '<div style="background:#ece6d6;height:22px;border-radius:4px;overflow:hidden">'
+            f'<div style="width:{pct:.1f}%;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold))"></div>'
+            '</div></div>'
+        )
+    viz += (
+        '<div style="text-align:center;margin-top:18px;font-size:12px;color:var(--muted);font-style:italic">'
+        'Every scenario earned a positive real return — even buying the day before the crash.'
+        '</div>'
+        '<div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted)">'
+        'Source: Shiller <em>Irrational Exuberance</em> dataset · '
+        f'data through {data_end_str} · investtops-par.streamlit.app'
+        '</div></div>'
+    )
+    st.markdown(viz, unsafe_allow_html=True)
+
     # Plain-English explanation using the most recent scenario (COVID)
     covid = results[-1]
     st.markdown(
@@ -1149,6 +1187,44 @@ with tab2:
         )
     table_html += "</tbody></table>"
     st.markdown(table_html, unsafe_allow_html=True)
+
+    # Shareable visual: annualized real return per war
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown('<div class="section-label">At A Glance — Annualized Real Return</div>', unsafe_allow_html=True)
+    cagrs = [(r["real_tr_f"] ** (1.0 / r["years"]) - 1.0) if r["years"] else 0 for r in war_results]
+    scale_max = max(cagrs + [0.10])
+    viz = (
+        '<div style="background:#fffdf7;border:1px solid #e6dfcf;border-radius:12px;'
+        'padding:28px 32px;margin:8px 0 4px;font-family:DM Mono,monospace">'
+        '<div style="text-align:center;font-family:Cormorant Garamond,serif;font-size:22px;'
+        'color:var(--text);font-weight:700;margin-bottom:4px">'
+        'Even When War Broke Out — What Patience Earned You</div>'
+        '<div style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:22px">'
+        'Annualized real return · inflation stripped out · dividends reinvested</div>'
+    )
+    for s, r, cagr in zip(WAR_SCENARIOS, war_results, cagrs):
+        pct = (cagr / scale_max) * 100 if scale_max else 0
+        viz += (
+            '<div style="margin:14px 0">'
+            '<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text);margin-bottom:4px">'
+            f'<span><strong>{s["short"]}</strong> · {r["start_str"]} <span style="color:var(--muted)">({r["years"]}y)</span></span>'
+            f'<span><span style="color:var(--teal);font-weight:700">{cagr*100:.1f}% / yr</span> '
+            f'<span style="color:var(--muted)">→ {fmt_x(r["real_tr_f"])} total</span></span>'
+            '</div>'
+            '<div style="background:#ece6d6;height:22px;border-radius:4px;overflow:hidden">'
+            f'<div style="width:{pct:.1f}%;height:100%;background:linear-gradient(90deg,var(--teal),var(--gold))"></div>'
+            '</div></div>'
+        )
+    viz += (
+        '<div style="text-align:center;margin-top:18px;font-size:12px;color:var(--muted);font-style:italic">'
+        'Every war-era investor earned a positive real return — markets rewarded patience through every one.'
+        '</div>'
+        '<div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted)">'
+        'Source: Shiller <em>Irrational Exuberance</em> dataset · '
+        f'data through {data_end_str} · investtops-par.streamlit.app'
+        '</div></div>'
+    )
+    st.markdown(viz, unsafe_allow_html=True)
 
     # Footnote
     st.markdown(
