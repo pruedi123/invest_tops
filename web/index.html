@@ -151,6 +151,11 @@ table.analysis { font-size: 13px; min-width: 480px; }
 .go { display: block; width: 100%; font-family: var(--mono); font-size: 15px; font-weight: 500; padding: 13px; border: 0; border-radius: 8px;
   background: var(--teal); color: #fff; cursor: pointer; }
 .go:hover { filter: brightness(1.1); }
+.bp-hero { text-align: center; margin: 28px auto 8px; max-width: 640px; }
+.bp-label { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+.bp-num { font-family: var(--serif); font-size: clamp(72px, 16vw, 132px); font-weight: 700; line-height: 1; color: var(--gold); margin: 8px 0 12px; }
+.bp-text { font-family: var(--serif); font-size: 22px; line-height: 1.5; color: var(--text); }
+.bp-text strong { color: var(--gold); }
 .small-note { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
 
 @media (max-width: 760px) {
@@ -407,6 +412,8 @@ function keepOpen(el, html) {
     }
     const inv = readAmt(), r = analyze(target, inv, ROWS);
     $("#sd-out").innerHTML = `<div class="eyebrow" style="margin-top:36px">${r.start_str} → ${r.end_str} · ${fmt(inv)} invested</div>
+      <div class="bp-hero"><div class="bp-label">Buying power since ${r.start_str}</div><div class="bp-num">+${shownX(r)}</div>
+        <div class="bp-text">Your investment can now buy <strong>${shownX(r)}</strong> as much. Not ${shownX(r)} as many dollars. ${shownX(r)} as much <em>stuff</em>.</div></div>
       ${hedgePanel(r)}
       <div class="grid3" style="margin-top:20px">${[
         metric("Amount Invested", fmt(r.scaled), "teal"), metric(`★ Buying Power (${yr(r)} dollars)`, fmt(r.real_end), "gold"),
