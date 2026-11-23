@@ -460,6 +460,26 @@ def find_last_with_dividends(rows):
             return r
 
 
+# ── Forward earnings snapshot (FactSet) ──
+# Not in the Shiller file. Update by hand from the latest FactSet "Earnings Insight" PDF
+# (weekly, advantage.factset.com → Earnings Insight). EPS dollars are derived as price ÷ P/E,
+# because FactSet shows the exact dollar figures only in charts.
+FORWARD = {
+    "as_of": "Nov 20, 2026",
+    "price": 7175.83,          # S&P 500 price FactSet used for the ratios
+    "fwd_pe": 17.1,            # price ÷ next-12-month earnings estimate
+    "fwd_pe_5yr": 19.8,
+    "fwd_pe_10yr": 19.1,
+    "ttm_pe": 22.9,            # price ÷ past-12-month earnings (FactSet adjusted basis)
+    "q3_growth": 32.9,         # blended Q3 2026 year-over-year earnings growth, %
+    "q3_reported": 93,         # % of S&P 500 companies reported
+    "q3_beat": 84,             # % beating estimates
+    "cy_this": ("2026", 33.7),
+    "cy_next": ("2027", 16.4),
+    "url": "https://advantage.factset.com/hubfs/Website/Resources%20Section/Research%20Desk/Earnings%20Insight/EarningsInsight_112026.pdf",
+}
+
+
 MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 
 
@@ -762,7 +782,7 @@ WAR_SCENARIOS = [
 ]
 
 # ── Navigation ──
-tab1, tab2, tab3 = st.tabs(["📈 Bought at the Top", "⚔️ Invested When Wars Started", "🔍 Single Date Query"])
+tab1, tab2, tab3, tab4 = st.tabs(["📈 Bought at the Top", "⚔️ Invested When Wars Started", "🔍 Single Date Query", "🏭 Earnings Today"])
 
 
 # ═══════════════════════════════════════════
@@ -1432,3 +1452,81 @@ with tab3:
             f'irrationalexuberance.com · Data through {data_end_str}</div>',
             unsafe_allow_html=True,
         )
+
+
+# ═══════════════════════════════════════════
+#  TAB 4: EARNINGS TODAY (past vs. expected)
+# ═══════════════════════════════════════════
+with tab4:
+    F = FORWARD
+    fwd_eps = F["price"] / F["fwd_pe"]
+    ttm_adj_eps = F["price"] / F["ttm_pe"]
+    e_last = find_last_with_earnings(rows)
+    shiller_eps = float(e_last[3])
+    shiller_str = date_str(float(e_last[0]))
+    yr_ago = find_row(rows, round(float(e_last[0]) - 1, 2))
+    shiller_yoy = (shiller_eps / float(yr_ago[3]) - 1) * 100 if yr_ago and yr_ago[3] else None
+    fwd_vs_ttm = (fwd_eps / ttm_adj_eps - 1) * 100
+
+    st.markdown('<div class="eyebrow">S&P 500 · Earnings Per Share · Past 12 Months vs. Next 12 Months</div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-title">What Are Companies <em>Earning</em> — And Expected To Earn?</div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="hero-subtitle">When you own the S&P 500, you own a share of these profits. '
+        f'Here is what one share of the index earned over the past year, and what Wall Street analysts expect it to earn over the next year.</div>',
+        unsafe_allow_html=True,
+    )
+
+    def _cards(items):
+        cols = st.columns(3)
+        for j, (label, val, sub, color) in enumerate(items):
+            with cols[j % 3]:
+                css = f"metric-val {color}" if color else "metric-val"
+                st.markdown(f"""
+                <div class="metric-card" style="margin-bottom:10px">
+                    <div class="metric-label">{label}</div>
+                    <div class="{css}">{val}</div>
+                    <div class="metric-label" style="margin-top:6px;letter-spacing:0;text-transform:none">{sub}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+    st.markdown('<div class="section-label">Earnings Per Share</div>', unsafe_allow_html=True)
+    _cards([
+        ("Past 12 Months · As Reported", fmt_eps(shiller_eps),
+         f"Shiller, through {shiller_str}" + (f" · {shiller_yoy:+.0f}% vs. a year earlier" if shiller_yoy is not None else ""), "teal"),
+        ("Past 12 Months · Adjusted", f"≈ ${ttm_adj_eps:,.0f}", f"FactSet, {F['as_of']}", ""),
+        ("★ Next 12 Months · Forecast", f"≈ ${fwd_eps:,.0f}", f"FactSet analyst estimate, {F['as_of']} · {fwd_vs_ttm:+.0f}% vs. past year", "gold"),
+    ])
+
+    st.markdown('<div class="section-label">What You Pay For Each Dollar Of Profit</div>', unsafe_allow_html=True)
+    _cards([
+        ("Price ÷ Next Year's Profits", f"{F['fwd_pe']:.1f}", f"5-yr avg {F['fwd_pe_5yr']} · 10-yr avg {F['fwd_pe_10yr']}", "gold"),
+        ("Price ÷ Last Year's Profits", f"{F['ttm_pe']:.1f}", "FactSet adjusted earnings", ""),
+        ("S&P 500 Price Used", f"{F['price']:,.2f}", f"FactSet, {F['as_of']}", ""),
+    ])
+
+    st.markdown('<div class="section-label">The Latest Report Card</div>', unsafe_allow_html=True)
+    _cards([
+        ("Q3 2026 Profit Growth", f"+{F['q3_growth']}%", f"vs. a year earlier · {F['q3_reported']}% of companies reported", "teal"),
+        ("Beat Estimates", f"{F['q3_beat']}%", "of companies that have reported", ""),
+        (f"Expected Growth · {F['cy_this'][0]} / {F['cy_next'][0]}", f"+{F['cy_this'][1]}% / +{F['cy_next'][1]}%", "FactSet analyst estimates", ""),
+    ])
+
+    st.markdown(
+        f'<div class="method-box" style="margin-top:24px">'
+        f'<h3>Why Are There Three Numbers?</h3>'
+        f'<p style="font-size:15px;line-height:1.8">'
+        f'<strong>As reported</strong> is profit exactly as companies file it with the government, one-time charges and all. That is what Shiller tracks, and it is the figure the rest of this app uses.<br>'
+        f'<strong>Adjusted</strong> is the profit companies and analysts usually quote. It leaves most one-time charges out, so it runs a little higher.<br>'
+        f'<strong>Next 12 months</strong> is a forecast. It is what analysts expect, not what has happened. '
+        f'Most years these forecasts land close. In a recession they have come in far too high.</p>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        f'<div class="footnote-text" style="margin-top:32px">Sources: FactSet <em>Earnings Insight</em>, {F["as_of"]} '
+        f'(<a href="{F["url"]}" target="_blank">report</a>) · ≈ figures are S&amp;P 500 price ÷ FactSet P/E ratio · '
+        f'Robert Shiller, <em>Irrational Exuberance</em> dataset, earnings through {shiller_str}. '
+        f'Forecasts are analysts\' opinions and may be wrong. Past results are no guarantee of future results.</div>',
+        unsafe_allow_html=True,
+    )
