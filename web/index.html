@@ -432,10 +432,6 @@ function keepOpen(el, html) {
       <div class="small-note">Real = CPI stripped out. Total return = dividends reinvested. Holding period: ${r.years} years.
         Earnings = S&amp;P 500 trailing 12-month earnings per share, through ${r.earn_end_str} (Shiller lags earnings a few months); real figures in ${r.earn_end_str} dollars.</div>
       <div style="margin-top:24px">${bars(r)}</div>
-      <div class="method-box" style="margin-top:24px;border-color:var(--gold)"><h3 style="color:var(--gold)">What Does "${shownX(r)}" Real Return Mean?</h3>
-        <p style="font-size:15px;line-height:1.8">Whatever your money could buy in ${r.start_str} — a car, a vacation, a month of groceries — your investment can now buy
-        <strong style="color:var(--gold)">${shownX(r)}</strong> as much. Not ${shownX(r)} as many dollars. ${shownX(r)} as much <em>stuff</em>.
-        All price increases over the past ${r.years} years have already been stripped out.</p></div>
       <div class="footnote-text" style="margin-top:32px">Source: Robert Shiller, <em>Irrational Exuberance</em> dataset · irrationalexuberance.com · Data through ${DATA_END}</div>`;
   });
 })();
