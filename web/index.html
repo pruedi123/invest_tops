@@ -413,7 +413,7 @@ function keepOpen(el, html) {
     const inv = readAmt(), r = analyze(target, inv, ROWS);
     $("#sd-out").innerHTML = `<div class="eyebrow" style="margin-top:36px">${r.start_str} → ${r.end_str} · ${fmt(inv)} invested</div>
       <div class="bp-hero"><div class="bp-label">Buying power since ${r.start_str}</div><div class="bp-num">+${shownX(r)}</div>
-        <div class="bp-text">Your investment can now buy <strong>${shownX(r)}</strong> as much. Not ${shownX(r)} as many dollars. ${shownX(r)} as much <em>stuff</em>.</div></div>
+        <div class="bp-text">Your ${fmt(inv)} invested in ${r.start_str} now buys <strong>${shownX(r)}</strong> as much as it did back then.</div></div>
       ${hedgePanel(r)}
       <div class="grid3" style="margin-top:20px">${[
         metric("Amount Invested", fmt(r.scaled), "teal"), metric(`★ Buying Power (${yr(r)} dollars)`, fmt(r.real_end), "gold"),
