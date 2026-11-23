@@ -235,6 +235,19 @@ const shownX = r => multOf(r.real_end, r.investment);
 const bar = (label, value, max, color, text) => `<div class="bar-row"><div class="bar-label-text">${label}</div>
   <div class="bar-track"><div class="bar-fill" style="width:${(max > 0 ? value / max * 100 : 0).toFixed(1)}%;background:${color}"></div></div>
   <div class="bar-val-text">${text}</div></div>`;
+// Inflation-hedge panel: cost of living vs. dividends vs. $1 owned (all nominal multiples).
+const timesX = v => (v >= 20 ? Math.round(v).toLocaleString("en-US") : v >= 10 ? v.toFixed(1) : v.toFixed(2));
+function hedgePanel(r) {
+  if (!r.x_div || !r.x_cpi) return "";
+  const items = [["Cost of living", r.x_cpi, "#b3aa98"], ["Dividends paid", r.x_div, "var(--green)"], ["$1 owned, dividends reinvested", r.x_total, "var(--gold)"]];
+  const m = Math.max(...items.map(i => i[1]));
+  const close = r.x_div >= r.x_cpi * 1.5 ? "Ownership didn't just keep up with inflation — it left it far behind."
+    : r.x_div >= r.x_cpi ? "Ownership kept ahead of inflation." : "Over this stretch, dividends did not keep pace with the cost of living.";
+  return `<div class="method-box" style="margin-top:24px;border-color:var(--green)"><h3 style="color:var(--green)">Ownership vs. The Cost Of Living</h3>
+    <p style="font-size:15px;line-height:1.8;color:var(--text)">Since ${r.start_str}, the cost of living rose ${timesX(r.x_cpi)} times. The dividends paid by America's largest companies rose ${timesX(r.x_div)} times. ${close}</p>
+    <div class="bar-container">${items.map(([l, v, c]) => bar(l, v, m, c, plusX(v))).join("")}</div>
+    <div class="small-note">S&amp;P 500, nominal dollars. Dividends per share through ${r.div_end_str}. Source: Robert Shiller, <em>Irrational Exuberance</em> dataset.</div></div>`;
+}
 // Bar chart: what $1 became (nominal), next to dividend growth and the cost of living.
 const plusX = v => "+" + (v >= 20 ? Math.round(v).toLocaleString("en-US") : v >= 10 ? v.toFixed(1) : v.toFixed(2)) + "x";
 const bars = r => {
@@ -394,6 +407,7 @@ function keepOpen(el, html) {
     }
     const inv = readAmt(), r = analyze(target, inv, ROWS);
     $("#sd-out").innerHTML = `<div class="eyebrow" style="margin-top:36px">${r.start_str} → ${r.end_str} · ${fmt(inv)} invested</div>
+      ${hedgePanel(r)}
       <div class="grid3" style="margin-top:20px">${[
         metric("Amount Invested", fmt(r.scaled), "teal"), metric(`★ Buying Power (${yr(r)} dollars)`, fmt(r.real_end), "gold"),
         metric("Nominal Ending Value", fmt(r.nom_end)), metric("Buying Power, No Dividends", fmt(r.price_only)),
