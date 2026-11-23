@@ -151,11 +151,12 @@ table.analysis { font-size: 13px; min-width: 480px; }
 .go { display: block; width: 100%; font-family: var(--mono); font-size: 15px; font-weight: 500; padding: 13px; border: 0; border-radius: 8px;
   background: var(--teal); color: #fff; cursor: pointer; }
 .go:hover { filter: brightness(1.1); }
-.bp-hero { text-align: center; margin: 28px auto 8px; max-width: 640px; }
-.bp-label { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
-.bp-num { font-family: var(--serif); font-size: clamp(72px, 16vw, 132px); font-weight: 700; line-height: 1; color: var(--gold); margin: 8px 0 12px; }
-.bp-text { font-family: var(--serif); font-size: 22px; line-height: 1.5; color: var(--text); }
-.bp-text strong { color: var(--gold); }
+.bp-hero { text-align: center; margin: 40px auto 12px; max-width: 760px; }
+.bp-label { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.bp-num { font-variant-numeric: lining-nums; font-family: var(--serif); font-size: clamp(80px, 18vw, 140px); font-weight: 700; line-height: 1; color: var(--gold); margin: 14px 0 10px; }
+.bp-head { font-variant-numeric: lining-nums; font-family: var(--serif); font-size: clamp(28px, 5vw, 40px); font-weight: 600; line-height: 1.2; margin-bottom: 14px; }
+.bp-text { font-size: 15px; line-height: 1.7; color: var(--text); }
+.bp-foot { font-size: 12px; color: var(--muted); margin-top: 12px; }
 .small-note { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
 
 @media (max-width: 760px) {
@@ -240,6 +241,18 @@ const shownX = r => multOf(r.real_end, r.investment);
 const bar = (label, value, max, color, text) => `<div class="bar-row"><div class="bar-label-text">${label}</div>
   <div class="bar-track"><div class="bar-fill" style="width:${(max > 0 ? value / max * 100 : 0).toFixed(1)}%;background:${color}"></div></div>
   <div class="bar-val-text">${text}</div></div>`;
+// Big buying-power headline at the top of Single Date results.
+const FULL_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const longDate = d => { const y = Math.trunc(d), m = Math.max(1, Math.min(12, Math.round((d - y) * 100))); return `${FULL_MONTHS[m - 1]} ${y}`; };
+const words = v => fmt(shownDollars(v)).replace(/M$/, " million").replace(/B$/, " billion");
+function bpHero(r, inv) {
+  const x = shownX(r).replace(/x$/, ""), endDate = findLastComplete(ROWS)[0];
+  return `<div class="bp-hero"><div class="bp-label">The S&amp;P 500 · ${longDate(r.start_date)}–${longDate(endDate)}</div>
+    <div class="bp-num">${x}X</div>
+    <div class="bp-head">${x} times the purchasing power.</div>
+    <div class="bp-text">In real terms, ${fmt(inv)} invested in ${r.start_str.slice(-4)} now buys ${x} times as much as it did then.</div>
+    <div class="bp-foot">Assumes dividends reinvested. Historical performance does not guarantee future results.</div></div>`;
+}
 // Inflation-hedge panel: cost of living vs. dividends vs. $1 owned (all nominal multiples).
 const timesX = v => (v >= 20 ? Math.round(v).toLocaleString("en-US") : v >= 10 ? v.toFixed(1) : v.toFixed(2));
 function hedgePanel(r) {
@@ -411,9 +424,7 @@ function keepOpen(el, html) {
       $("#sd-y").value = y; target = y + Number($("#sd-m").value) / 100;
     }
     const inv = readAmt(), r = analyze(target, inv, ROWS);
-    $("#sd-out").innerHTML = `<div class="eyebrow" style="margin-top:36px">${r.start_str} → ${r.end_str} · ${fmt(inv)} invested</div>
-      <div class="bp-hero"><div class="bp-label">Buying power since ${r.start_str}</div><div class="bp-num">+${shownX(r)}</div>
-        <div class="bp-text">Your ${fmt(inv)} invested in ${r.start_str} now buys <strong>${shownX(r)}</strong> as much as it did back then.</div></div>
+    $("#sd-out").innerHTML = `${bpHero(r, inv)}
       ${hedgePanel(r)}
       <div class="grid3" style="margin-top:20px">${[
         metric("Amount Invested", fmt(r.scaled), "teal"), metric(`★ Buying Power (${yr(r)} dollars)`, fmt(r.real_end), "gold"),
