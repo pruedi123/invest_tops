@@ -93,6 +93,7 @@
       earn_real_end: r(erE, 2),
       earn_end_str: dateStr(earnEnd[0]),
       div_end_str: dateStr(divEnd[0]),
+      div_end: divEnd[0],
       years: Math.trunc(years),
       // Unrounded nominal growth multiples for the bar chart
       x_total: nomTrF,

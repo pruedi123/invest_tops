@@ -245,29 +245,45 @@ const bar = (label, value, max, color, text) => `<div class="bar-row"><div class
 const FULL_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const longDate = d => { const y = Math.trunc(d), m = Math.max(1, Math.min(12, Math.round((d - y) * 100))); return `${FULL_MONTHS[m - 1]} ${y}`; };
 const words = v => fmt(shownDollars(v)).replace(/M$/, " million").replace(/B$/, " billion");
+// Headline dollars: millions to one decimal, smaller amounts to three significant figures ($451,706 -> $452,000).
+const nice = v => Math.abs(v) >= 1e6 ? words(v) : "$" + Number(v.toPrecision(3)).toLocaleString("en-US");
 function bpHero(r, inv) {
   const x = shownX(r).replace(/x$/, ""), endDate = findLastComplete(ROWS)[0];
   return `<div class="bp-hero"><div class="bp-label">The S&amp;P 500 · ${longDate(r.start_date)}–${longDate(endDate)}</div>
     <div class="bp-num">${x}X</div>
-    <div class="bp-head">${x} times the purchasing power.</div>
-    <div class="bp-text">In real terms, ${fmt(inv)} invested in ${r.start_str.slice(-4)} now buys ${x} times as much as it did then.</div>
-    <div class="bp-foot">Assumes dividends reinvested. Historical performance does not guarantee future results.</div></div>`;
+    <div class="bp-head">${fmt(inv)} grew to ${nice(r.real_end)} in purchasing power.</div>
+    <div class="bp-text">That's ${x} times what it could buy in ${r.start_str.slice(-4)}, after inflation and with dividends reinvested.</div>
+    <div class="bp-foot">Historical performance does not guarantee future results.</div></div>`;
 }
 // Inflation-hedge panel: cost of living vs. dividends vs. $1 owned (all nominal multiples).
 const timesX = v => (v >= 20 ? Math.round(v).toLocaleString("en-US") : v >= 10 ? v.toFixed(1) : v.toFixed(2));
+// Plain-English growth: "nearly doubled", "grew more than fivefold", "rose 31%".
+const NUMW = ["", "", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+function growWords(v, verb = "grew") {
+  if (v < 1) return `fell ${Math.round((1 - v) * 100)}%`;
+  if (v < 1.85) return `rose ${Math.round((v - 1) * 100)}%`;
+  if (v < 1.98) return "nearly doubled";
+  if (v < 2.02) return "doubled";
+  const n = Math.floor(v), fold = k => (k <= 10 ? NUMW[k] + "fold" : k.toLocaleString("en-US") + "-fold");
+  if (v - n < 0.01) return `${verb} ${fold(n)}`;
+  if (n >= 10 && v - n >= 0.5) return `${verb} nearly ${fold(n + 1)}`;
+  return `${verb} more than ${fold(n)}`;
+}
+const money1 = v => "$" + (v >= 20 ? Math.round(v).toLocaleString("en-US") : v.toFixed(2));
 function hedgePanel(r) {
   if (!r.x_div || !r.x_cpi) return "";
   const items = [["Cost of living", r.x_cpi, "#b3aa98"], ["Dividends paid", r.x_div, "var(--green)"], ["$1 owned, dividends reinvested", r.x_total, "var(--gold)"]];
   const m = Math.max(...items.map(i => i[1]));
-  const close = r.x_div >= r.x_cpi * 1.5 ? "Ownership didn't just keep up with inflation — it left it far behind."
-    : r.x_div >= r.x_cpi ? "Ownership kept ahead of inflation." : "Over this stretch, dividends did not keep pace with the cost of living.";
+  const since = longDate(r.start_date), endStr = longDate(findLastComplete(ROWS)[0]);
+  const para = `Since ${since}, the cost of living ${growWords(r.x_cpi, "rose")}. ${r.x_div > r.x_cpi ? "But" : "Meanwhile,"} the dividends paid by the companies in the S&amp;P 500 ${growWords(r.x_div)}.
+    And $1 invested in those companies, with dividends reinvested, grew to ${money1(r.x_total)} before inflation — or ${money1(shownDollars(r.real_end) / r.investment)} in purchasing power after inflation.`;
   return `<div class="method-box" style="margin-top:24px;border-color:var(--green)"><h3 style="color:var(--green)">Ownership vs. The Cost Of Living</h3>
-    <p style="font-size:15px;line-height:1.8;color:var(--text)">Since ${r.start_str}, the cost of living rose ${timesX(r.x_cpi)} times. The dividends paid by America's largest companies rose ${timesX(r.x_div)} times. ${close}</p>
+    <p style="font-size:15px;line-height:1.8;color:var(--text)">${para}</p>
     <div class="bar-container">${items.map(([l, v, c]) => bar(l, v, m, c, plusX(v))).join("")}</div>
-    <div class="small-note">S&amp;P 500, nominal dollars. Dividends per share through ${r.div_end_str}. Source: Robert Shiller, <em>Irrational Exuberance</em> dataset.</div></div>`;
+    <div class="small-note">S&amp;P 500, nominal dollars (before inflation). Cost of living and $1 invested: ${since}–${endStr}. Dividends: ${since}–${longDate(r.div_end)} (latest dividend data). Source: Robert Shiller, <em>Irrational Exuberance</em> dataset.</div></div>`;
 }
 // Bar chart: what $1 became (nominal), next to dividend growth and the cost of living.
-const plusX = v => "+" + (v >= 20 ? Math.round(v).toLocaleString("en-US") : v >= 10 ? v.toFixed(1) : v.toFixed(2)) + "x";
+const plusX = v => (v >= 20 ? Math.round(v).toLocaleString("en-US") : v >= 10 ? v.toFixed(1) : v.toFixed(2)) + "x";
 const bars = r => {
   const items = [["$1, dividends reinvested", r.x_total, "var(--gold)"], ["$1, no dividends reinvested", r.x_price, "var(--teal)"],
     ["Dividends", r.x_div, "var(--green)"], ["Cost of living", r.x_cpi, "#b3aa98"]].filter(i => i[1]);
