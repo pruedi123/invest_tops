@@ -251,9 +251,9 @@ function bpHero(r, inv) {
   const x = shownX(r).replace(/x$/, ""), endDate = findLastComplete(ROWS)[0];
   return `<div class="bp-hero"><div class="bp-label">The S&amp;P 500 · ${longDate(r.start_date)}–${longDate(endDate)}</div>
     <div class="bp-num">${x}X</div>
-    <div class="bp-head">${fmt(inv)} grew to ${nice(r.real_end)} in purchasing power.</div>
-    <div class="bp-text">That's ${x} times what it could buy in ${r.start_str.slice(-4)}, after inflation and with dividends reinvested.</div>
-    <div class="bp-foot">Historical performance does not guarantee future results.</div></div>`;
+    <div class="bp-head">${fmt(inv)} invested became the equivalent of ${nice(r.real_end)} in ${r.start_str.slice(-4)} purchasing power.</div>
+    <div class="bp-text">That's ${x} times the original purchasing power, even after inflation.</div>
+    <div class="bp-foot">Assumes dividends reinvested. Historical performance does not guarantee future results.</div></div>`;
 }
 // Inflation-hedge panel: cost of living vs. dividends vs. $1 owned (all nominal multiples).
 const timesX = v => (v >= 20 ? Math.round(v).toLocaleString("en-US") : v >= 10 ? v.toFixed(1) : v.toFixed(2));
@@ -270,13 +270,20 @@ function growWords(v, verb = "grew") {
   return `${verb} more than ${fold(n)}`;
 }
 const money1 = v => "$" + (v >= 20 ? Math.round(v).toLocaleString("en-US") : v.toFixed(2));
+// Closing takeaway, only where the numbers support it.
+function takeaway(r) {
+  const real = shownDollars(r.real_end) / r.investment;
+  if (r.x_div > r.x_cpi && real >= 1.5) return " Ownership didn't just keep pace with the rising cost of living. It increased purchasing power substantially.";
+  if (r.x_div > r.x_cpi && real > 1) return " Ownership kept ahead of the rising cost of living.";
+  return "";
+}
 function hedgePanel(r) {
   if (!r.x_div || !r.x_cpi) return "";
   const items = [["Cost of living", r.x_cpi, "#b3aa98"], ["Dividends paid", r.x_div, "var(--green)"], ["$1 owned, dividends reinvested", r.x_total, "var(--gold)"]];
   const m = Math.max(...items.map(i => i[1]));
   const since = longDate(r.start_date), endStr = longDate(findLastComplete(ROWS)[0]);
   const para = `Since ${since}, the cost of living ${growWords(r.x_cpi, "rose")}. ${r.x_div > r.x_cpi ? "But" : "Meanwhile,"} the dividends paid by the companies in the S&amp;P 500 ${growWords(r.x_div)}.
-    And $1 invested in those companies, with dividends reinvested, grew to ${money1(r.x_total)} before inflation — or ${money1(shownDollars(r.real_end) / r.investment)} in purchasing power after inflation.`;
+    And $1 invested in those companies, with dividends reinvested, grew to ${money1(r.x_total)} before inflation — or ${money1(shownDollars(r.real_end) / r.investment)} in purchasing power after inflation.${takeaway(r)}`;
   return `<div class="method-box" style="margin-top:24px;border-color:var(--green)"><h3 style="color:var(--green)">Ownership vs. The Cost Of Living</h3>
     <p style="font-size:15px;line-height:1.8;color:var(--text)">${para}</p>
     <div class="bar-container">${items.map(([l, v, c]) => bar(l, v, m, c, plusX(v))).join("")}</div>
