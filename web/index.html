@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Bought at the Top</title>
+<meta name="description" content="What if you bought the S&P 500 at the very top of every major bubble, or the month every war began, and simply held? Shiller data, inflation-adjusted, dividends reinvested.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f5f2ed; --gold: #7a5c08; --green: #155c38; --teal: #0e5c5c; --blue: #1a3f7a;
+  --red: #8b1a1a; --text: #2a2a28; --muted: #6b6860; --card-bg: #fffef9; --border: #d5d0c6;
+  --serif: 'Cormorant Garamond', Georgia, serif; --mono: 'DM Mono', ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); }
+body { font-family: var(--mono); -webkit-font-smoothing: antialiased; }
+a { color: var(--teal); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px 64px; }
+
+/* Tabs */
+.tabs { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--border); }
+.tabs-inner { max-width: 1100px; margin: 0 auto; padding: 0 16px; display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+.tabs-inner::-webkit-scrollbar { display: none; }
+.tab { flex-shrink: 0; font-family: var(--mono); font-size: 13px; background: none; border: 0; border-bottom: 3px solid transparent;
+  padding: 14px 12px 11px; color: var(--muted); cursor: pointer; }
+.tab:hover { color: var(--text); }
+.tab[aria-selected="true"] { color: var(--teal); border-bottom-color: var(--teal); font-weight: 500; }
+.panel { padding-top: 40px; }
+.panel[hidden] { display: none; }
+
+.eyebrow, .section-label { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--teal); text-align: center; }
+.eyebrow { margin-bottom: 12px; }
+.section-label { margin: 40px 0 20px; }
+.hero-title { font-family: var(--serif); font-size: clamp(34px, 6vw, 56px); font-weight: 700; line-height: 1.1; text-align: center; margin: 0 0 16px; }
+.hero-title em { color: var(--gold); font-style: italic; }
+.hero-subtitle { font-family: var(--serif); font-size: 18px; line-height: 1.6; color: var(--muted); text-align: center; font-style: italic; max-width: 720px; margin: 0 auto 24px; }
+.byline { text-align: center; margin-bottom: 32px; }
+.byline .name { font-family: var(--serif); font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.byline .info { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+/* Amount input */
+.amount { max-width: 520px; margin: 0 auto 28px; }
+.presets { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 12px; }
+.presets button { font-family: var(--mono); font-size: 13px; padding: 9px 0; background: var(--card-bg); color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px; cursor: pointer; }
+.presets button:hover { border-color: var(--teal); color: var(--teal); }
+.presets button.on { background: var(--teal); border-color: var(--teal); color: #fff; }
+label.fld { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.money { display: flex; align-items: center; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 0 12px; }
+.money:focus-within { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(14,92,92,.12); }
+.money span { color: var(--muted); font-size: 16px; }
+input, select { font-family: var(--mono); font-size: 16px; color: var(--text); }
+.money input { border: 0; outline: 0; background: none; padding: 11px 6px; width: 100%; }
+select, .plain { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; width: 100%; }
+
+.method-box { background: var(--card-bg); border: 2px solid var(--teal); border-radius: 10px; padding: 28px; margin: 0 auto 32px; }
+.method-box h3 { font-family: var(--serif); font-size: 22px; color: var(--teal); margin: 0 0 12px; }
+.method-box p { font-size: 13px; line-height: 1.7; color: var(--muted); margin: 0; }
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.formula-box { background: var(--bg); border-radius: 6px; padding: 16px; font-size: 12px; line-height: 1.8; color: var(--muted); }
+
+.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.cpi-tile { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 10px; text-align: center; }
+.cpi-date { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.cpi-amt { font-size: 17px; font-weight: 500; color: var(--teal); }
+.cpi-eq { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+.fear-bar { background: var(--card-bg); border: 2px solid var(--red); border-radius: 10px; padding: 24px 28px; margin: 32px auto; }
+.fear-row { display: flex; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+.fear-icon { font-size: 28px; flex-shrink: 0; }
+.fear-header { font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: var(--red); font-weight: 700; margin-bottom: 8px; }
+.fear-text { font-family: var(--serif); font-size: 16px; line-height: 1.6; color: var(--muted); }
+.fear-badge { border: 2px solid var(--red); border-radius: 8px; background: #fff; padding: 14px 18px; font-size: 11px; line-height: 1.5;
+  color: var(--red); text-align: center; font-weight: 500; margin-top: 16px; width: 100%; }
+
+/* Scenario cards */
+details.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+details.card > summary { list-style: none; cursor: pointer; display: flex; align-items: center; padding: 18px 24px; gap: 16px; }
+details.card > summary::-webkit-details-marker { display: none; }
+details.card > summary:hover { background: #fffcf2; }
+.card-num { font-family: var(--serif); font-size: 28px; font-weight: 700; color: var(--border); width: 36px; flex-shrink: 0; }
+.card-main { flex: 1; min-width: 0; }
+.card-title { font-family: var(--serif); font-size: 18px; font-weight: 600; }
+.card-peak { font-size: 11px; color: var(--muted); }
+.card-vals { display: flex; gap: 18px; flex-shrink: 0; text-align: right; }
+.card-val-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+.card-invested-val { font-size: 14px; color: var(--teal); font-weight: 500; }
+.card-result-val { font-size: 20px; color: var(--gold); font-weight: 500; }
+.chev { color: var(--muted); font-size: 12px; transition: transform .2s; flex-shrink: 0; }
+details.card[open] .chev { transform: rotate(90deg); }
+.card-body { padding: 4px 24px 22px; border-top: 1px solid var(--border); }
+
+.conversion-note { background: rgba(14,92,92,.06); border-radius: 6px; padding: 14px 18px; font-size: 14px; color: var(--teal); line-height: 1.7; margin: 14px 0; }
+.narrative { font-family: var(--serif); font-size: 18px; line-height: 1.7; color: var(--muted); font-style: italic; margin: 14px 0; }
+.pain-box { background: rgba(139,26,26,.04); border-left: 3px solid var(--red); padding: 14px 18px; font-size: 14px; color: var(--red); line-height: 1.7; border-radius: 0 6px 6px 0; margin: 14px 0; }
+.era-quote { background: #fff; border-left: 3px solid var(--gold); padding: 16px 20px; margin: 14px 0; border-radius: 0 8px 8px 0; }
+.era-quote blockquote { font-family: var(--serif); font-size: 19px; line-height: 1.5; font-style: italic; margin: 0 0 8px; }
+.quote-attr { font-size: 13px; color: var(--muted); letter-spacing: .5px; }
+
+.metric-card { background: var(--bg); border-radius: 8px; padding: 14px; text-align: center; }
+.metric-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 4px; }
+.metric-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.metric-val { font-size: 20px; font-weight: 500; }
+.metric-val.gold { color: var(--gold); font-size: 24px; }
+.metric-val.teal { color: var(--teal); }
+
+.bar-container { margin: 16px 0 0; }
+.bar-row { display: flex; align-items: center; margin-bottom: 6px; gap: 10px; }
+.bar-label-text { font-size: 13px; color: var(--muted); width: 110px; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; height: 22px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width .6s ease; }
+.bar-val-text { font-size: 13px; width: 90px; font-weight: 500; flex-shrink: 0; }
+
+.closing-quote { font-family: var(--serif); font-size: 22px; line-height: 1.5; text-align: center; font-weight: 600; margin: 40px 0 16px; }
+.closing-tagline { font-family: var(--serif); font-size: 18px; color: var(--gold); text-align: center; font-style: italic; }
+.closing-tagline span, .hero-subtitle .who { display: block; font-style: normal; font-size: 14px; color: var(--muted); }
+.footer-credit { text-align: center; font-family: var(--serif); font-size: 16px; font-weight: 600; margin: 40px 0 12px; }
+.footnote-text { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.7; }
+
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table.t { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 640px; }
+table.t th { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); border-bottom: 2px solid var(--border); padding: 8px 10px; text-align: left; font-weight: 400; }
+table.t td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.col-gold { color: var(--gold); font-weight: 500; }
+.col-teal { color: var(--teal); }
+table.analysis { font-size: 13px; min-width: 480px; }
+
+.glance { background: #fffdf7; border: 1px solid #e6dfcf; border-radius: 12px; padding: 28px 32px; margin: 8px 0 4px; }
+.glance h4 { text-align: center; font-family: var(--serif); font-size: 22px; font-weight: 700; margin: 0 0 4px; }
+.glance .sub { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+.g-row { margin: 14px 0; }
+.g-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 13px; margin-bottom: 4px; }
+.g-track { background: #ece6d6; height: 22px; border-radius: 4px; overflow: hidden; }
+.g-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--gold)); }
+.glance .foot { text-align: center; margin-top: 18px; font-size: 12px; color: var(--muted); }
+
+/* Single date */
+.query { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 20px; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+.seg button { font-family: var(--mono); font-size: 13px; background: #fff; border: 0; padding: 9px 14px; cursor: pointer; color: var(--muted); }
+.seg button.on { background: var(--teal); color: #fff; }
+.ym { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.go { display: block; width: 100%; font-family: var(--mono); font-size: 15px; font-weight: 500; padding: 13px; border: 0; border-radius: 8px;
+  background: var(--teal); color: #fff; cursor: pointer; }
+.go:hover { filter: brightness(1.1); }
+.small-note { font-size: 11px; color: var(--muted); margin-top: 8px; line-height: 1.6; }
+
+@media (max-width: 760px) {
+  .method-grid, .query { grid-template-columns: 1fr; }
+  .grid4 { grid-template-columns: repeat(2, 1fr); }
+  .grid3 { grid-template-columns: 1fr 1fr; }
+  details.card > summary { flex-wrap: wrap; padding: 16px; gap: 10px; }
+  .card-num { width: auto; font-size: 22px; }
+  .card-main { flex-basis: calc(100% - 60px); }
+  .card-vals { width: 100%; justify-content: flex-start; text-align: left; gap: 28px; padding-left: 2px; }
+  .chev { display: none; }
+  .card-body { padding: 4px 16px 18px; }
+  .method-box, .fear-bar, .glance { padding: 20px; }
+  .bar-label-text { width: 80px; font-size: 12px; }
+  .bar-val-text { width: 70px; font-size: 12px; }
+  .metric-val { font-size: 17px; } .metric-val.gold { font-size: 20px; }
+  .metric-label { font-size: 10px; }
+}
+@media (max-width: 420px) { .grid3 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <div class="tabs-inner">
+    <button class="tab" role="tab" data-tab="top">📈 Bought at the Top</button>
+    <button class="tab" role="tab" data-tab="wars">⚔️ Invested When Wars Started</button>
+    <button class="tab" role="tab" data-tab="single">🔍 Single Date Query</button>
+    <button class="tab" role="tab" data-tab="earnings">🏭 Earnings Today</button>
+  </div>
+</nav>
+<main class="wrap">
+  <section class="panel" id="p-top" role="tabpanel"></section>
+  <section class="panel" id="p-wars" role="tabpanel" hidden></section>
+  <section class="panel" id="p-single" role="tabpanel" hidden></section>
+  <section class="panel" id="p-earnings" role="tabpanel" hidden></section>
+</main>
+
+<script src="data.js"></script>
+<script src="content.js"></script>
+<script src="forward.js"></script>
+<script src="engine.js"></script>
+<script>
+const { analyze, fmt, fmtX, fmtEps, dateStr, findLastComplete, findLastWithEarnings, findRow, MONTHS } = Engine;
+const ROWS = window.SHILLER;
+const DATA_END = dateStr(findLastComplete(ROWS)[0]);
+const SITE = location.host || "investtops.vercel.app";
+const $ = (s, el = document) => el.querySelector(s);
+
+const BYLINE = `<div class="byline"><div class="name">Paul Ruedi</div><div class="info">CEO, Ruedi Wealth Management, Inc.<br>
+  A $500,000,000 Investment Advisory &amp; Retirement Planning Firm<br>
+  Champaign, IL · <a href="https://www.ruediwealth.com">ruediwealth.com</a> · <a href="mailto:paulruedi@ruediwealth.com">paulruedi@ruediwealth.com</a></div></div>`;
+const FOOTER = `<div class="footer-credit">Research &amp; Analysis by Paul Ruedi · CEO, Ruedi Wealth Management, Inc. · <a href="https://www.ruediwealth.com">ruediwealth.com</a></div>
+  <div class="footnote-text">Source: Robert Shiller, <em>Irrational Exuberance</em> dataset · irrationalexuberance.com · S&amp;P 500 monthly data with dividends reinvested ·
+  CPI-adjusted to constant purchasing power · Data through ${DATA_END}</div>`;
+
+const PRESETS = [[10000, "$10K"], [50000, "$50K"], [100000, "$100K"], [500000, "$500K"], [1000000, "$1M"]];
+function amountBox(id, label) {
+  return `<div class="amount"><div class="presets" id="${id}-presets">${PRESETS.map(([v, l]) =>
+    `<button type="button" data-v="${v}">${l}</button>`).join("")}</div>
+    <label class="fld" for="${id}">${label}</label>
+    <div class="money"><span>$</span><input id="${id}" inputmode="numeric" autocomplete="off" value="100,000"></div></div>`;
+}
+function wireAmount(id, min, onChange) {
+  const inp = $("#" + id), pre = $("#" + id + "-presets");
+  const read = () => Math.min(100000000, Math.max(min, Number(inp.value.replace(/[^0-9]/g, "")) || min));
+  const mark = v => pre.querySelectorAll("button").forEach(b => b.classList.toggle("on", Number(b.dataset.v) === v));
+  pre.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    const v = Number(b.dataset.v); inp.value = v.toLocaleString("en-US"); mark(v); onChange(v);
+  });
+  inp.addEventListener("input", () => { const raw = Number(inp.value.replace(/[^0-9]/g, "")); if (raw >= min) { mark(raw); onChange(read()); } });
+  inp.addEventListener("blur", () => { const v = read(); inp.value = v.toLocaleString("en-US"); mark(v); onChange(v); });
+  mark(100000);
+  return read;
+}
+
+const bar = (label, value, max, color) => `<div class="bar-row"><div class="bar-label-text">${label}</div>
+  <div class="bar-track"><div class="bar-fill" style="width:${(max > 0 ? value / max * 100 : 0).toFixed(1)}%;background:${color}"></div></div>
+  <div class="bar-val-text">${fmt(value)}</div></div>`;
+const bars = r => { const m = Math.max(r.real_end, r.nom_end, r.price_only, r.scaled);
+  return `<div class="bar-container">${bar("Nominal TR", r.nom_end, m, "var(--gold)")}${bar("Real TR ★", r.real_end, m, "var(--green)")}${bar("Price Only", r.price_only, m, "var(--teal)")}${bar("Invested", r.scaled, m, "var(--border)")}</div>`; };
+const metric = (label, val, color = "", sub = "") => `<div class="metric-card"><div class="metric-label">${label}</div>
+  <div class="metric-val ${color}">${val}</div>${sub ? `<div class="metric-sub">${sub}</div>` : ""}</div>`;
+const metricsGrid = r => `<div class="grid3">${[
+  metric("Invested", fmt(r.scaled), "teal"), metric("★ Real Ending Value", fmt(r.real_end), "gold"),
+  metric("Nominal Ending Value", fmt(r.nom_end)), metric("Price Only (Real)", fmt(r.price_only)),
+  metric("Dividend Growth (Real)", fmtX(r.div_real_f)), metric("Holding Period", `${r.years} years`),
+  metric("Earnings Growth (Nominal)", fmtX(r.earn_nom_f)), metric("Earnings Growth (Real)", fmtX(r.earn_real_f)),
+  metric("Real Earnings / Share", `${fmtEps(r.earn_real_start)} → ${fmtEps(r.earn_real_end)}`)].join("")}</div>`;
+
+function card(s, r, inv, desc, rich) {
+  return `<details class="card"><summary>
+    <div class="card-num">${s.num}</div>
+    <div class="card-main"><div class="card-title">${s.label} · ${r.start_str}</div><div class="card-peak">${desc}</div></div>
+    <div class="card-vals"><div><div class="card-val-label">Invested</div><div class="card-invested-val">${fmt(r.scaled)}</div></div>
+      <div><div class="card-val-label">★ Real Value</div><div class="card-result-val">${fmt(r.real_end)}</div></div></div>
+    <div class="chev">▶</div></summary>
+    <div class="card-body">
+      <div class="conversion-note">Invested <strong>${fmt(r.scaled)}</strong> (CPI ${r.cpi_start} → ${r.cpi_end}) — equivalent purchasing power of <strong>${fmt(inv)}</strong> today.</div>
+      <div class="narrative">${s.narrative}</div>
+      ${rich && s.quote ? `<div class="era-quote"><blockquote>"${s.quote}"</blockquote><div class="quote-attr">— ${s.quote_attr}</div></div>` : ""}
+      ${rich && s.pain ? `<div class="pain-box"><strong>The Pain</strong><br>${s.pain}</div>` : ""}
+      ${metricsGrid(r)}${bars(r)}
+    </div></details>`;
+}
+
+function summaryTable(rowsHtml, firstCols) {
+  return `<div class="table-scroll"><table class="t"><thead><tr>${firstCols.map(c => `<th>${c}</th>`).join("")}<th>Invested</th>
+    <th>★ Real Value</th><th>Real TR Factor</th><th>Real Div Factor</th><th>Real Earn Factor</th><th>Years</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
+}
+const factorCells = r => `<td class="col-teal">${fmt(r.scaled)}</td><td class="col-gold">${fmt(r.real_end)}</td>
+  <td>${fmtX(r.real_tr_f)}</td><td>${fmtX(r.div_real_f)}</td><td>${fmtX(r.earn_real_f)}</td><td>${r.years}</td>`;
+
+function glance(list, results, title, footLine) {
+  const cagrs = results.map(r => r.years ? Math.pow(r.real_tr_f, 1 / r.years) - 1 : 0);
+  const max = Math.max(...cagrs, 0.10);
+  return `<div class="glance"><h4>${title}</h4><div class="sub">Annualized real return · inflation stripped out · dividends reinvested</div>
+    ${list.map((s, i) => `<div class="g-row"><div class="g-head"><span><strong>${s.short}</strong> · ${results[i].start_str} <span style="color:var(--muted)">(${results[i].years}y)</span></span>
+      <span><span style="color:var(--teal);font-weight:700">${(cagrs[i] * 100).toFixed(1)}% / yr</span> <span style="color:var(--muted)">→ ${fmtX(results[i].real_tr_f)} total</span></span></div>
+      <div class="g-track"><div class="g-fill" style="width:${(max ? cagrs[i] / max * 100 : 0).toFixed(1)}%"></div></div></div>`).join("")}
+    <div class="foot" style="font-style:italic">${footLine}</div>
+    <div class="foot" style="margin-top:10px">Source: Shiller <em>Irrational Exuberance</em> dataset · data through ${DATA_END} · ${SITE}</div></div>`;
+}
+
+// Re-render only the results area so open cards stay open when the amount changes.
+function keepOpen(el, html) {
+  const open = [...el.querySelectorAll("details.card")].map(d => d.open);
+  el.innerHTML = html;
+  el.querySelectorAll("details.card").forEach((d, i) => { if (open[i]) d.open = true; });
+}
+
+/* ── TAB 1: Bought at the top ── */
+(function () {
+  const p = $("#p-top");
+  p.innerHTML = `<div class="eyebrow">S&amp;P 500 · Shiller CAPE Data · Total Return With Dividends Reinvested</div>
+    <h1 class="hero-title">What If You Bought At The <em>Very Top?</em></h1>${BYLINE}
+    ${amountBox("amt-top", "Investment amount (today's dollars)")}<div id="top-out"></div>`;
+  const out = $("#top-out");
+  function render(inv) {
+    const res = SCENARIOS.map(s => analyze(s.date, inv, ROWS));
+    const s5 = res[4], s5scaled = inv * (s5.cpi_start / s5.cpi_end), covid = res[res.length - 1];
+    keepOpen(out, `
+      <div class="hero-subtitle">"Every generation believes the market is overvalued and ready to crash. Here is what actually happened to someone with the equivalent of
+        <strong>${fmt(inv)}</strong> in today's money who bought at the absolute peak of every major bubble — and simply held."<span class="who">— Paul Ruedi</span></div>
+      <div class="method-box"><h3>📐 How We Made This Apples-to-Apples</h3><div class="method-grid">
+        <div><p>A flat ${fmt(inv)} at each peak is misleading. That amount in 1929 would be a fortune; in 2020 it's a modest sum.
+          To compare honestly, we scale every investment using CPI so each one represents the <strong>same real purchasing power</strong> as ${fmt(inv)} today.</p>
+          <p style="margin-top:10px">Every dollar figure on this page is computed live from factor multipliers — change the amount above and every number updates instantly.</p></div>
+        <div class="formula-box"><strong style="color:var(--teal)">Example — ${s5.start_str}:</strong><br>CPI then: ${s5.cpi_start} · CPI now: ${s5.cpi_end}<br>
+          ${fmt(inv)} × (${s5.cpi_start} ÷ ${s5.cpi_end.toFixed(1)})<br>= <strong style="color:var(--teal)">${fmt(s5scaled)}</strong> invested in ${s5.start_str.slice(-4)} dollars</div>
+      </div></div>
+      <div class="section-label">The Equivalent Dollar Amount Invested At Each Peak</div>
+      <div class="grid4">${res.map(r => `<div class="cpi-tile"><div class="cpi-date">${r.start_str}</div><div class="cpi-amt">${fmt(r.scaled)}</div><div class="cpi-eq">≡ ${fmt(inv)} today</div></div>`).join("")}</div>
+      <div class="fear-bar"><div class="fear-row"><div class="fear-icon">⚠️</div><div style="flex:1;min-width:0">
+        <div class="fear-header">The Narrative At Every Single Peak</div>
+        <div class="fear-text">"Valuations are stretched." · "The market can't go higher." · "A crash is inevitable." · People have said this at every single peak — 1929, 1968, 2000, 2007, the pandemic crash of 2020, and today.</div></div>
+        <div class="fear-badge">EVERY SINGLE TIME, THEY WERE RIGHT ABOUT THE CRASH — AND WRONG ABOUT WHAT FOLLOWED.</div></div></div>
+      <div class="section-label">Nine Moments of Maximum Pessimism · Nine Investors · One Result</div>
+      ${SCENARIOS.map((s, i) => card(s, res[i], inv, s.peak_desc, true)).join("")}
+      <div class="closing-quote">Every investor with the equivalent of ${fmt(inv)} in today's money who bought at the peaks, at the worst moments, even when the experts declared stocks dead — and simply held — made money. In every single case.</div>
+      <div class="closing-tagline">"The risk was never buying at the top. The risk was not buying at all."<span>— Paul Ruedi</span></div>
+      <div class="section-label">Summary Comparison</div>
+      ${summaryTable(SCENARIOS.map((s, i) => `<tr><td>${res[i].start_str} · ${s.short}</td><td>${s.crash}</td>${factorCells(res[i])}</tr>`).join(""), ["Peak / Crisis", "Crash After"])}
+      <div class="section-label">At A Glance — Annualized Real Return</div>
+      ${glance(SCENARIOS, res, "Even At The Worst Moment — What Patience Earned You", "Every scenario earned a positive real return — even buying the day before the crash.")}
+      <div class="method-box" style="margin-top:32px;border-color:var(--gold)"><h3 style="color:var(--gold)">What Does "${fmtX(covid.real_tr_f)}" Real Return Mean?</h3>
+        <p style="font-size:15px;line-height:1.8">Take the Pre-Pandemic Peak as an example. The Real Total Return Factor is <strong style="color:var(--gold)">${fmtX(covid.real_tr_f)}</strong>.
+        That means whatever your money could buy in ${covid.start_str} — a car, a vacation, a month of groceries — your investment can now buy <strong style="color:var(--gold)">${fmtX(covid.real_tr_f)}</strong> as much.
+        Not ${fmtX(covid.real_tr_f)} as many dollars. ${fmtX(covid.real_tr_f)} as much <em>stuff</em>. All price increases have already been stripped out.</p>
+        <p style="font-size:15px;line-height:1.8;margin-top:10px">The same logic applies to every scenario on this page. The 1929 investor's ${fmtX(res[0].real_tr_f)} factor means every dollar of purchasing power they invested can now buy ${fmtX(res[0].real_tr_f)} as much as it could in ${res[0].start_str}.</p></div>
+      ${FOOTER}`);
+  }
+  wireAmount("amt-top", 1000, render); render(100000);
+})();
+
+/* ── TAB 2: Wars ── */
+(function () {
+  const p = $("#p-wars");
+  p.innerHTML = `<div class="eyebrow">S&amp;P 500 · Shiller CAPE Data · Total Return With Dividends Reinvested</div>
+    <h1 class="hero-title">What If You Invested When <em>Wars Started?</em></h1>${BYLINE}
+    ${amountBox("amt-war", "Investment amount (today's dollars)")}<div id="war-out"></div>`;
+  const out = $("#war-out"), n = WAR_SCENARIOS.length;
+  function render(inv) {
+    const res = WAR_SCENARIOS.map(s => analyze(s.date, inv, ROWS));
+    keepOpen(out, `
+      <div class="hero-subtitle">"Wars are the ultimate test of investor nerve. Every major conflict of the past century triggered panic, uncertainty, and predictions of economic collapse.
+        Here is what actually happened to someone with the equivalent of <strong>${fmt(inv)}</strong> in today's money who invested in the S&amp;P 500 the month each war began — and simply held."<span class="who">— Paul Ruedi</span></div>
+      <div class="fear-bar"><div class="fear-row"><div class="fear-icon">⚔️</div><div style="flex:1;min-width:0">
+        <div class="fear-header">The Headline At Every War's Outbreak</div>
+        <div class="fear-text">"This changes everything." · "The economy can't survive this." · "Get out of stocks now." · Every war brought genuine terror, real casualties, and dire predictions for markets. Every single time, the long-term investor who stayed the course came out ahead.</div></div>
+        <div class="fear-badge">WARS END. MARKETS DON'T.</div></div></div>
+      <div class="section-label">${n} Wars · ${n} Investments · One Result</div>
+      ${WAR_SCENARIOS.map((s, i) => card(s, res[i], inv, s.desc, false)).join("")}
+      <div class="closing-quote">Every investor with the equivalent of ${fmt(inv)} in today's money who invested when wars broke out — during the most frightening geopolitical moments of the past century — and simply held, made money. In every single case.</div>
+      <div class="closing-tagline">"Wars end. Recessions end. Bear markets end. Exposed long-term returns to the S&amp;P 500 never have."<span>— Paul Ruedi</span></div>
+      <div class="section-label">Summary Comparison</div>
+      ${summaryTable(WAR_SCENARIOS.map((s, i) => `<tr><td>${s.short}</td><td>${res[i].start_str}</td>${factorCells(res[i])}</tr>`).join(""), ["War", "Started"])}
+      <div class="section-label">At A Glance — Annualized Real Return</div>
+      ${glance(WAR_SCENARIOS, res, "Even When War Broke Out — What Patience Earned You", "Every war-era investor earned a positive real return — markets rewarded patience through every one.")}
+      ${FOOTER}`);
+  }
+  wireAmount("amt-war", 1000, render); render(100000);
+})();
+
+/* ── TAB 3: Single date ── */
+(function () {
+  const p = $("#p-single");
+  const lastYear = Math.trunc(findLastComplete(ROWS)[0]);
+  p.innerHTML = `<h1 class="hero-title" style="font-size:clamp(30px,5vw,40px)">Single Date Analysis</h1>
+    <div class="hero-subtitle">Pick any historical date or event and see what happened to an S&amp;P 500 investment held to today.</div>
+    <div class="query"><div>
+      <label class="fld">Choose input method</label>
+      <div class="seg" id="sd-mode"><button type="button" data-m="event">Historical event</button><button type="button" data-m="custom" class="on">Custom date</button></div>
+      <div id="sd-event" hidden><label class="fld" for="sd-ev">Select an event</label>
+        <select id="sd-ev">${Object.keys(DATE_ALIASES).map(k => `<option>${k}</option>`).join("")}</select></div>
+      <div id="sd-custom" class="ym"><div><label class="fld" for="sd-y">Year</label><input class="plain" id="sd-y" type="number" min="1871" max="${lastYear}" value="1959"></div>
+        <div><label class="fld" for="sd-m">Month</label><select id="sd-m">${MONTHS.map((m, i) => `<option value="${i + 1}"${i === 10 ? " selected" : ""}>${m}</option>`).join("")}</select></div></div>
+    </div><div>${amountBox("amt-single", "Investment amount ($)").replace('class="amount"', 'class="amount" style="margin:0"')}</div></div>
+    <button type="button" class="go" id="sd-go">Analyze</button><div id="sd-out"></div>`;
+  let mode = "custom";
+  $("#sd-mode").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return; mode = b.dataset.m;
+    $("#sd-mode").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+    $("#sd-event").hidden = mode !== "event"; $("#sd-custom").hidden = mode !== "custom";
+  });
+  const readAmt = wireAmount("amt-single", 100, () => {});
+  $("#sd-go").addEventListener("click", () => {
+    let target;
+    if (mode === "event") target = DATE_ALIASES[$("#sd-ev").value];
+    else {
+      const y = Math.min(lastYear, Math.max(1871, Math.trunc(Number($("#sd-y").value) || 1959)));
+      $("#sd-y").value = y; target = y + Number($("#sd-m").value) / 100;
+    }
+    const inv = readAmt(), r = analyze(target, inv, ROWS);
+    $("#sd-out").innerHTML = `<div class="eyebrow" style="margin-top:36px">${r.start_str} → ${r.end_str} · ${fmt(inv)} invested (today's dollars)</div>
+      <div class="grid3" style="margin-top:20px">${[
+        metric("CPI-Adjusted Amount Invested", fmt(r.scaled), "teal"), metric("★ Real Ending Value", fmt(r.real_end), "gold"),
+        metric("Nominal Ending Value", fmt(r.nom_end)), metric("Price Only (Real)", fmt(r.price_only)),
+        metric("Inflation (CPI)", `${r.cpi_factor}x`), metric("Holding Period", `${r.years} years`),
+        metric("Earnings Growth (Nominal)", fmtX(r.earn_nom_f)), metric("Earnings Growth (Real)", fmtX(r.earn_real_f)),
+        metric("Real Earnings / Share", `${fmtEps(r.earn_real_start)} → ${fmtEps(r.earn_real_end)}`)].join("")}</div>
+      <div class="table-scroll" style="margin-top:28px"><table class="t analysis"><thead><tr><th></th><th>Nominal</th><th>Real (Infl-Adj)</th></tr></thead><tbody>
+        <tr><td>🏷️ Inflation (CPI)</td><td>${r.cpi_factor}x</td><td>—</td></tr>
+        <tr><td>💸 Dividend growth</td><td>${fmtX(r.div_nom_f)}</td><td>${fmtX(r.div_real_f)}</td></tr>
+        <tr><td>🏭 Earnings growth</td><td>${fmtX(r.earn_nom_f)}</td><td>${fmtX(r.earn_real_f)}</td></tr>
+        <tr><td>🏭 Earnings / share</td><td>${fmtEps(r.earn_nom_start)} → ${fmtEps(r.earn_nom_end)}</td><td>${fmtEps(r.earn_real_start)} → ${fmtEps(r.earn_real_end)}</td></tr>
+        <tr><td>📈 Price only</td><td>—</td><td>${fmtX(r.price_r_f)}</td></tr>
+        <tr><td>💰 Total return</td><td>${fmtX(r.nom_tr_f)}</td><td>${fmtX(r.real_tr_f)}</td></tr>
+        <tr><td></td><td>${fmt(r.scaled)} → ${fmt(r.nom_end)}</td><td>${fmt(r.scaled)} → ${fmt(r.real_end)}</td></tr></tbody></table></div>
+      <div class="small-note">Real = CPI stripped out. Total return = dividends reinvested. Holding period: ${r.years} years.
+        Earnings = S&amp;P 500 trailing 12-month earnings per share, through ${r.earn_end_str} (Shiller lags earnings a few months); real figures in ${r.earn_end_str} dollars.</div>
+      <div style="margin-top:24px">${bars(r)}</div>
+      <div class="method-box" style="margin-top:24px;border-color:var(--gold)"><h3 style="color:var(--gold)">What Does "${fmtX(r.real_tr_f)}" Real Return Mean?</h3>
+        <p style="font-size:15px;line-height:1.8">Whatever your money could buy in ${r.start_str} — a car, a vacation, a month of groceries — your investment can now buy
+        <strong style="color:var(--gold)">${fmtX(r.real_tr_f)}</strong> as much. Not ${fmtX(r.real_tr_f)} as many dollars. ${fmtX(r.real_tr_f)} as much <em>stuff</em>.
+        All price increases over the past ${r.years} years have already been stripped out.</p></div>
+      <div class="footnote-text" style="margin-top:32px">Source: Robert Shiller, <em>Irrational Exuberance</em> dataset · irrationalexuberance.com · Data through ${DATA_END}</div>`;
+  });
+})();
+
+/* ── TAB 4: Earnings today ── */
+(function () {
+  const F = FORWARD;
+  const fwdEps = F.price / F.fwd_pe, ttmAdjEps = F.price / F.ttm_pe;
+  const eLast = findLastWithEarnings(ROWS), shillerEps = eLast[3], shillerStr = dateStr(eLast[0]);
+  const yrAgo = findRow(ROWS, Number((eLast[0] - 1).toFixed(2)));
+  const yoy = yrAgo && yrAgo[3] ? (shillerEps / yrAgo[3] - 1) * 100 : null;
+  const fwdVsTtm = (fwdEps / ttmAdjEps - 1) * 100;
+  const sign = v => (v >= 0 ? "+" : "") + v.toFixed(0);
+  const usd0 = v => "≈ $" + Math.round(v).toLocaleString("en-US");
+  $("#p-earnings").innerHTML = `<div class="eyebrow">S&amp;P 500 · Earnings Per Share · Past 12 Months vs. Next 12 Months</div>
+    <h1 class="hero-title">What Are Companies <em>Earning</em> — And Expected To Earn?</h1>
+    <div class="hero-subtitle">When you own the S&amp;P 500, you own a share of these profits. Here is what one share of the index earned over the past year, and what Wall Street analysts expect it to earn over the next year.</div>
+    <div class="section-label">Earnings Per Share</div><div class="grid3">
+      ${metric("Past 12 Months · As Reported", fmtEps(shillerEps), "teal", `Shiller, through ${shillerStr}${yoy !== null ? ` · ${sign(yoy)}% vs. a year earlier` : ""}`)}
+      ${metric("Past 12 Months · Adjusted", usd0(ttmAdjEps), "", `FactSet, ${F.as_of}`)}
+      ${metric("★ Next 12 Months · Forecast", usd0(fwdEps), "gold", `FactSet analyst estimate, ${F.as_of} · ${sign(fwdVsTtm)}% vs. past year`)}</div>
+    <div class="section-label">What You Pay For Each Dollar Of Profit</div><div class="grid3">
+      ${metric("Price ÷ Next Year's Profits", F.fwd_pe.toFixed(1), "gold", `5-yr avg ${F.fwd_pe_5yr} · 10-yr avg ${F.fwd_pe_10yr}`)}
+      ${metric("Price ÷ Last Year's Profits", F.ttm_pe.toFixed(1), "", "FactSet adjusted earnings")}
+      ${metric("S&amp;P 500 Price Used", F.price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }), "", `FactSet, ${F.as_of}`)}</div>
+    <div class="section-label">The Latest Report Card</div><div class="grid3">
+      ${metric("Q3 2026 Profit Growth", `+${F.q3_growth}%`, "teal", `vs. a year earlier · ${F.q3_reported}% of companies reported`)}
+      ${metric("Beat Estimates", `${F.q3_beat}%`, "", "of companies that have reported")}
+      ${metric(`Expected Growth · ${F.cy_this[0]} / ${F.cy_next[0]}`, `+${F.cy_this[1]}% / +${F.cy_next[1]}%`, "", "FactSet analyst estimates")}</div>
+    <div class="method-box" style="margin-top:32px"><h3>Why Are There Three Numbers?</h3><p style="font-size:15px;line-height:1.8">
+      <strong>As reported</strong> is profit exactly as companies file it with the government, one-time charges and all. That is what Shiller tracks, and it is the figure the rest of this app uses.<br>
+      <strong>Adjusted</strong> is the profit companies and analysts usually quote. It leaves most one-time charges out, so it runs a little higher.<br>
+      <strong>Next 12 months</strong> is a forecast. It is what analysts expect, not what has happened. Most years these forecasts land close. In a recession they have come in far too high.</p></div>
+    <div class="footnote-text" style="margin-top:32px">Sources: FactSet <em>Earnings Insight</em>, ${F.as_of} (<a href="${F.url}" target="_blank" rel="noopener">report</a>) · ≈ figures are S&amp;P 500 price ÷ FactSet P/E ratio ·
+      Robert Shiller, <em>Irrational Exuberance</em> dataset, earnings through ${shillerStr}. Forecasts are analysts' opinions and may be wrong. Past results are no guarantee of future results.</div>`;
+})();
+
+/* ── Tabs (remembers the tab in the URL hash so a link can open a specific tab) ── */
+const tabs = [...document.querySelectorAll(".tab")];
+function show(name) {
+  if (!tabs.some(t => t.dataset.tab === name)) name = "top";
+  tabs.forEach(t => t.setAttribute("aria-selected", t.dataset.tab === name));
+  document.querySelectorAll(".panel").forEach(p => p.hidden = p.id !== "p-" + name);
+}
+tabs.forEach(t => t.addEventListener("click", () => { history.replaceState(null, "", "#" + t.dataset.tab); show(t.dataset.tab); window.scrollTo(0, 0); }));
+show(location.hash.slice(1));
+</script>
+</body>
+</html>
