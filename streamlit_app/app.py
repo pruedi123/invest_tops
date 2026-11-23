@@ -448,6 +448,12 @@ def find_last_complete(rows):
             return r
 
 
+def find_last_with_earnings(rows):
+    for r in reversed(rows):
+        if r[0] and r[3] and len(r) > 10 and r[10]:
+            return r
+
+
 def find_last_with_dividends(rows):
     for r in reversed(rows):
         if r[0] and r[1] and r[2] and r[4] and r[7] and r[8] and r[9]:
@@ -490,6 +496,16 @@ def analyze(start_date_float, investment, rows):
         div_start_r = dr_s
         div_end_r = dr_e
 
+    # Earnings per share (Shiller col D nominal, col K real in latest-month dollars)
+    earn_end = find_last_with_earnings(rows) or end
+    earn_nom_f = earn_real_f = None
+    earn_nom_s = earn_nom_e = earn_real_s = earn_real_e = None
+    if start[3] and earn_end[3] and len(start) > 10 and start[10] and earn_end[10]:
+        earn_nom_s = float(start[3]); earn_nom_e = float(earn_end[3])
+        earn_real_s = float(start[10]); earn_real_e = float(earn_end[10])
+        earn_nom_f = earn_nom_e / earn_nom_s
+        earn_real_f = earn_real_e / earn_real_s
+
     sy = int(start[0]); sm = round((float(start[0]) - sy) * 100)
     ey = int(end[0]); em = round((float(end[0]) - ey) * 100)
     years = (ey - sy) + (em - sm) / 12
@@ -513,8 +529,19 @@ def analyze(start_date_float, investment, rows):
         "div_real_f": round(div_real_f, 1) if div_real_f else None,
         "div_start_r": round(div_start_r, 2) if div_start_r else None,
         "div_end_r": round(div_end_r, 2) if div_end_r else None,
+        "earn_nom_f": round(earn_nom_f, 1) if earn_nom_f else None,
+        "earn_real_f": round(earn_real_f, 1) if earn_real_f else None,
+        "earn_nom_start": round(earn_nom_s, 2) if earn_nom_s else None,
+        "earn_nom_end": round(earn_nom_e, 2) if earn_nom_e else None,
+        "earn_real_start": round(earn_real_s, 2) if earn_real_s else None,
+        "earn_real_end": round(earn_real_e, 2) if earn_real_e else None,
+        "earn_end_str": date_str(float(earn_end[0])),
         "years": int(years),
     }
+
+
+def fmt_eps(n):
+    return "—" if n is None else f"${n:,.2f}"
 
 
 def fmt(n):
@@ -890,6 +917,9 @@ with tab1:
                 ("Price Only (Real)", fmt(price_only), ""),
                 ("Dividend Growth (Real)", fmt_x(r["div_real_f"]), ""),
                 ("Holding Period", f'{r["years"]} years', ""),
+                ("Earnings Growth (Nominal)", fmt_x(r["earn_nom_f"]), ""),
+                ("Earnings Growth (Real)", fmt_x(r["earn_real_f"]), ""),
+                ("Real Earnings / Share", f'{fmt_eps(r["earn_real_start"])} → {fmt_eps(r["earn_real_end"])}', ""),
             ]
             for j, (label, val, color) in enumerate(metrics):
                 with m_cols[j % 3]:
@@ -929,7 +959,7 @@ with tab1:
 
     table_html = '<table class="summary-table"><thead><tr>'
     table_html += "<th>Peak / Crisis</th><th>Crash After</th><th>Invested</th>"
-    table_html += "<th>★ Real Value</th><th>Real TR Factor</th><th>Real Div Factor</th><th>Years</th>"
+    table_html += "<th>★ Real Value</th><th>Real TR Factor</th><th>Real Div Factor</th><th>Real Earn Factor</th><th>Years</th>"
     table_html += "</tr></thead><tbody>"
     for s, r in zip(SCENARIOS, results):
         table_html += (
@@ -939,6 +969,7 @@ with tab1:
             f'<td class="col-gold">{fmt(r["real_end"])}</td>'
             f'<td>{fmt_x(r["real_tr_f"])}</td>'
             f'<td>{fmt_x(r["div_real_f"])}</td>'
+            f'<td>{fmt_x(r["earn_real_f"])}</td>'
             f'<td>{r["years"]}</td></tr>'
         )
     table_html += "</tbody></table>"
@@ -1133,6 +1164,9 @@ with tab2:
                 ("Price Only (Real)", fmt(price_only), ""),
                 ("Dividend Growth (Real)", fmt_x(r["div_real_f"]), ""),
                 ("Holding Period", f'{r["years"]} years', ""),
+                ("Earnings Growth (Nominal)", fmt_x(r["earn_nom_f"]), ""),
+                ("Earnings Growth (Real)", fmt_x(r["earn_real_f"]), ""),
+                ("Real Earnings / Share", f'{fmt_eps(r["earn_real_start"])} → {fmt_eps(r["earn_real_end"])}', ""),
             ]
             for j, (label, val, color) in enumerate(metrics):
                 with m_cols[j % 3]:
@@ -1173,7 +1207,7 @@ with tab2:
 
     table_html = '<table class="summary-table"><thead><tr>'
     table_html += "<th>War</th><th>Started</th><th>Invested</th>"
-    table_html += "<th>★ Real Value</th><th>Real TR Factor</th><th>Real Div Factor</th><th>Years</th>"
+    table_html += "<th>★ Real Value</th><th>Real TR Factor</th><th>Real Div Factor</th><th>Real Earn Factor</th><th>Years</th>"
     table_html += "</tr></thead><tbody>"
     for s, r in zip(WAR_SCENARIOS, war_results):
         table_html += (
@@ -1183,6 +1217,7 @@ with tab2:
             f'<td class="col-gold">{fmt(r["real_end"])}</td>'
             f'<td>{fmt_x(r["real_tr_f"])}</td>'
             f'<td>{fmt_x(r["div_real_f"])}</td>'
+            f'<td>{fmt_x(r["earn_real_f"])}</td>'
             f'<td>{r["years"]}</td></tr>'
         )
     table_html += "</tbody></table>"
@@ -1303,6 +1338,9 @@ with tab3:
             ("Price Only (Real)", fmt(r["price_only"]), ""),
             ("Inflation (CPI)", f'{r["cpi_factor"]}x', ""),
             ("Holding Period", f'{r["years"]} years', ""),
+            ("Earnings Growth (Nominal)", fmt_x(r["earn_nom_f"]), ""),
+            ("Earnings Growth (Real)", fmt_x(r["earn_real_f"]), ""),
+            ("Real Earnings / Share", f'{fmt_eps(r["earn_real_start"])} → {fmt_eps(r["earn_real_end"])}', ""),
         ]
         for j, (label, val, color) in enumerate(card_data):
             with mc[j % 3]:
@@ -1333,6 +1371,16 @@ with tab3:
                     <td>{fmt_x(r['div_real_f'])}</td>
                 </tr>
                 <tr>
+                    <td>🏭 Earnings growth</td>
+                    <td>{fmt_x(r['earn_nom_f'])}</td>
+                    <td>{fmt_x(r['earn_real_f'])}</td>
+                </tr>
+                <tr>
+                    <td>🏭 Earnings / share</td>
+                    <td>{fmt_eps(r['earn_nom_start'])} → {fmt_eps(r['earn_nom_end'])}</td>
+                    <td>{fmt_eps(r['earn_real_start'])} → {fmt_eps(r['earn_real_end'])}</td>
+                </tr>
+                <tr>
                     <td>📈 Price only</td>
                     <td>—</td>
                     <td>{fmt_x(r['price_r_f'])}</td>
@@ -1351,6 +1399,7 @@ with tab3:
         </table>
         <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:8px">
             Real = CPI stripped out. Total return = dividends reinvested. Holding period: {r['years']} years.
+            Earnings = S&amp;P 500 trailing 12-month earnings per share, through {r['earn_end_str']} (Shiller lags earnings a few months); real figures in {r['earn_end_str']} dollars.
         </div>
         """, unsafe_allow_html=True)
 
