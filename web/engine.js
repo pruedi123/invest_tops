@@ -93,6 +93,11 @@
       earn_real_end: r(erE, 2),
       earn_end_str: dateStr(earnEnd[0]),
       years: Math.trunc(years),
+      // Unrounded nominal growth multiples for the bar chart
+      x_total: nomTrF,
+      x_price: start[1] && end[1] ? end[1] / start[1] : null,
+      x_div: divNomF,
+      x_cpi: cpiFactor,
     };
   }
 
