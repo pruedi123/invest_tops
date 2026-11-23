@@ -227,6 +227,12 @@ function wireAmount(id, min, onChange) {
   return read;
 }
 
+// Multiple that matches the rounded real value on screen: $7.4M on $100,000 reads "74x", not "73.8x".
+function shownX(r) {
+  const v = r.real_end, a = Math.abs(v);
+  const shown = a >= 1e9 ? Math.round(v / 1e8) * 1e8 : a >= 1e6 ? Math.round(v / 1e5) * 1e5 : Math.round(v);
+  return Number((shown / r.investment).toFixed(2)).toLocaleString("en-US", { maximumFractionDigits: 2 }) + "x";
+}
 const bar = (label, value, max, color) => `<div class="bar-row"><div class="bar-label-text">${label}</div>
   <div class="bar-track"><div class="bar-fill" style="width:${(max > 0 ? value / max * 100 : 0).toFixed(1)}%;background:${color}"></div></div>
   <div class="bar-val-text">${fmt(value)}</div></div>`;
@@ -314,11 +320,11 @@ function keepOpen(el, html) {
       ${summaryTable(SCENARIOS.map((s, i) => `<tr><td>${res[i].start_str} · ${s.short}</td><td>${s.crash}</td>${factorCells(res[i])}</tr>`).join(""), ["Peak / Crisis", "Crash After"])}
       <div class="section-label">At A Glance — Annualized Real Return</div>
       ${glance(SCENARIOS, res, "Even At The Worst Moment — What Patience Earned You", "Every scenario earned a positive real return — even buying the day before the crash.")}
-      <div class="method-box" style="margin-top:32px;border-color:var(--gold)"><h3 style="color:var(--gold)">What Does "${fmtX(covid.real_tr_f)}" Real Return Mean?</h3>
-        <p style="font-size:15px;line-height:1.8">Take the Pre-Pandemic Peak as an example. The Real Total Return Factor is <strong style="color:var(--gold)">${fmtX(covid.real_tr_f)}</strong>.
-        That means whatever your money could buy in ${covid.start_str} — a car, a vacation, a month of groceries — your investment can now buy <strong style="color:var(--gold)">${fmtX(covid.real_tr_f)}</strong> as much.
-        Not ${fmtX(covid.real_tr_f)} as many dollars. ${fmtX(covid.real_tr_f)} as much <em>stuff</em>. All price increases have already been stripped out.</p>
-        <p style="font-size:15px;line-height:1.8;margin-top:10px">The same logic applies to every scenario on this page. The 1929 investor's ${fmtX(res[0].real_tr_f)} factor means every dollar of purchasing power they invested can now buy ${fmtX(res[0].real_tr_f)} as much as it could in ${res[0].start_str}.</p></div>
+      <div class="method-box" style="margin-top:32px;border-color:var(--gold)"><h3 style="color:var(--gold)">What Does "${shownX(covid)}" Real Return Mean?</h3>
+        <p style="font-size:15px;line-height:1.8">Take the Pre-Pandemic Peak as an example. The Real Total Return Factor is <strong style="color:var(--gold)">${shownX(covid)}</strong>.
+        That means whatever your money could buy in ${covid.start_str} — a car, a vacation, a month of groceries — your investment can now buy <strong style="color:var(--gold)">${shownX(covid)}</strong> as much.
+        Not ${shownX(covid)} as many dollars. ${shownX(covid)} as much <em>stuff</em>. All price increases have already been stripped out.</p>
+        <p style="font-size:15px;line-height:1.8;margin-top:10px">The same logic applies to every scenario on this page. The 1929 investor's ${shownX(res[0])} factor means every dollar of purchasing power they invested can now buy ${shownX(res[0])} as much as it could in ${res[0].start_str}.</p></div>
       ${FOOTER}`);
   }
   wireAmount("amt-top", 1000, render); render(100000);
@@ -401,9 +407,9 @@ function keepOpen(el, html) {
       <div class="small-note">Real = CPI stripped out. Total return = dividends reinvested. Holding period: ${r.years} years.
         Earnings = S&amp;P 500 trailing 12-month earnings per share, through ${r.earn_end_str} (Shiller lags earnings a few months); real figures in ${r.earn_end_str} dollars.</div>
       <div style="margin-top:24px">${bars(r)}</div>
-      <div class="method-box" style="margin-top:24px;border-color:var(--gold)"><h3 style="color:var(--gold)">What Does "${fmtX(r.real_tr_f)}" Real Return Mean?</h3>
+      <div class="method-box" style="margin-top:24px;border-color:var(--gold)"><h3 style="color:var(--gold)">What Does "${shownX(r)}" Real Return Mean?</h3>
         <p style="font-size:15px;line-height:1.8">Whatever your money could buy in ${r.start_str} — a car, a vacation, a month of groceries — your investment can now buy
-        <strong style="color:var(--gold)">${fmtX(r.real_tr_f)}</strong> as much. Not ${fmtX(r.real_tr_f)} as many dollars. ${fmtX(r.real_tr_f)} as much <em>stuff</em>.
+        <strong style="color:var(--gold)">${shownX(r)}</strong> as much. Not ${shownX(r)} as many dollars. ${shownX(r)} as much <em>stuff</em>.
         All price increases over the past ${r.years} years have already been stripped out.</p></div>
       <div class="footnote-text" style="margin-top:32px">Source: Robert Shiller, <em>Irrational Exuberance</em> dataset · irrationalexuberance.com · Data through ${DATA_END}</div>`;
   });
