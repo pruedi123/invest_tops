@@ -227,6 +227,7 @@ function wireAmount(id, min, onChange) {
   return read;
 }
 
+const yr = r => r.start_str.slice(-4);
 // Multiple that matches the rounded real value on screen: $7.4M on $100,000 reads "74x", not "73.8x".
 function shownX(r) {
   const v = r.real_end, a = Math.abs(v);
@@ -241,7 +242,7 @@ const bars = r => { const m = Math.max(r.real_end, r.nom_end, r.price_only, r.sc
 const metric = (label, val, color = "", sub = "") => `<div class="metric-card"><div class="metric-label">${label}</div>
   <div class="metric-val ${color}">${val}</div>${sub ? `<div class="metric-sub">${sub}</div>` : ""}</div>`;
 const metricsGrid = r => `<div class="grid3">${[
-  metric("Invested", fmt(r.scaled), "teal"), metric("★ Real Ending Value", fmt(r.real_end), "gold"),
+  metric("Invested", fmt(r.scaled), "teal"), metric(`★ Buying Power (${yr(r)} dollars)`, fmt(r.real_end), "gold"),
   metric("Nominal Ending Value", fmt(r.nom_end)), metric("Price Only (Real)", fmt(r.price_only)),
   metric("Dividend Growth (Real)", fmtX(r.div_real_f)), metric("Holding Period", `${r.years} years`),
   metric("Earnings Growth (Nominal)", fmtX(r.earn_nom_f)), metric("Earnings Growth (Real)", fmtX(r.earn_real_f)),
@@ -252,10 +253,10 @@ function card(s, r, inv, desc, rich) {
     <div class="card-num">${s.num}</div>
     <div class="card-main"><div class="card-title">${s.label} · ${r.start_str}</div><div class="card-peak">${desc}</div></div>
     <div class="card-vals"><div><div class="card-val-label">Invested</div><div class="card-invested-val">${fmt(r.scaled)}</div></div>
-      <div><div class="card-val-label">★ Real Value</div><div class="card-result-val">${fmt(r.real_end)}</div></div></div>
+      <div><div class="card-val-label">★ Buying Power (${yr(r)} $)</div><div class="card-result-val">${fmt(r.real_end)}</div></div></div>
     <div class="chev">▶</div></summary>
     <div class="card-body">
-      <div class="conversion-note">Invested <strong>${fmt(inv)}</strong> in ${r.start_str}. Prices rose ${r.cpi_factor}x since then (CPI ${r.cpi_start} → ${r.cpi_end}); the ★ real value takes that inflation out.</div>
+      <div class="conversion-note">Invested <strong>${fmt(inv)}</strong> in ${r.start_str}. Prices rose ${r.cpi_factor}x since then (CPI ${r.cpi_start} → ${r.cpi_end}); the ★ buying power figure takes that inflation out and states the result in ${yr(r)} dollars. In today's dollars the account holds ${fmt(r.nom_end)}.</div>
       <div class="narrative">${s.narrative}</div>
       ${rich && s.quote ? `<div class="era-quote"><blockquote>"${s.quote}"</blockquote><div class="quote-attr">— ${s.quote_attr}</div></div>` : ""}
       ${rich && s.pain ? `<div class="pain-box"><strong>The Pain</strong><br>${s.pain}</div>` : ""}
@@ -265,7 +266,7 @@ function card(s, r, inv, desc, rich) {
 
 function summaryTable(rowsHtml, firstCols) {
   return `<div class="table-scroll"><table class="t"><thead><tr>${firstCols.map(c => `<th>${c}</th>`).join("")}<th>Invested</th>
-    <th>★ Real Value</th><th>Real TR Factor</th><th>Real Div Factor</th><th>Real Earn Factor</th><th>Years</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
+    <th>★ Buying Power (start-year $)</th><th>Real TR Factor</th><th>Real Div Factor</th><th>Real Earn Factor</th><th>Years</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
 }
 const factorCells = r => `<td class="col-teal">${fmt(r.scaled)}</td><td class="col-gold">${fmt(r.real_end)}</td>
   <td>${fmtX(r.real_tr_f)}</td><td>${fmtX(r.div_real_f)}</td><td>${fmtX(r.earn_real_f)}</td><td>${r.years}</td>`;
@@ -306,7 +307,7 @@ function keepOpen(el, html) {
           <p style="margin-top:10px">Change the amount above and every number updates instantly.</p></div>
         <div class="formula-box"><strong style="color:var(--teal)">Two ending values on every card:</strong><br>
           <strong>Nominal</strong> — the dollar balance you would see on your statement today.<br>
-          <strong style="color:var(--gold)">★ Real</strong> — the same balance with inflation taken out, so it shows how much your buying power actually grew.</div>
+          <strong style="color:var(--gold)">★ Buying power</strong> — the same balance with inflation taken out, stated in dollars of the year you invested. It shows how much your buying power actually grew.</div>
       </div></div>
       <div class="fear-bar"><div class="fear-row"><div class="fear-icon">⚠️</div><div style="flex:1;min-width:0">
         <div class="fear-header">The Narrative At Every Single Peak</div>
@@ -391,7 +392,7 @@ function keepOpen(el, html) {
     const inv = readAmt(), r = analyze(target, inv, ROWS);
     $("#sd-out").innerHTML = `<div class="eyebrow" style="margin-top:36px">${r.start_str} → ${r.end_str} · ${fmt(inv)} invested</div>
       <div class="grid3" style="margin-top:20px">${[
-        metric("Amount Invested", fmt(r.scaled), "teal"), metric("★ Real Ending Value", fmt(r.real_end), "gold"),
+        metric("Amount Invested", fmt(r.scaled), "teal"), metric(`★ Buying Power (${yr(r)} dollars)`, fmt(r.real_end), "gold"),
         metric("Nominal Ending Value", fmt(r.nom_end)), metric("Price Only (Real)", fmt(r.price_only)),
         metric("Inflation (CPI)", `${r.cpi_factor}x`), metric("Holding Period", `${r.years} years`),
         metric("Earnings Growth (Nominal)", fmtX(r.earn_nom_f)), metric("Earnings Growth (Real)", fmtX(r.earn_real_f)),
