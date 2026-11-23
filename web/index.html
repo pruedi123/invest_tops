@@ -235,9 +235,9 @@ const shownX = r => multOf(r.real_end, r.investment);
 const bar = (label, value, max, color, text) => `<div class="bar-row"><div class="bar-label-text">${label}</div>
   <div class="bar-track"><div class="bar-fill" style="width:${(max > 0 ? value / max * 100 : 0).toFixed(1)}%;background:${color}"></div></div>
   <div class="bar-val-text">${text}</div></div>`;
-// Bar chart shows growth multiples (852x, 74x, 12x, 1x), not dollars.
-const bars = r => { const inv = r.investment, m = Math.max(r.real_end, r.nom_end, r.price_only, r.scaled);
-  return `<div class="bar-container">${bar("Nominal Ending Dollars", r.nom_end, m, "var(--gold)", multOf(r.nom_end, inv))}${bar("Buying Power ★", r.real_end, m, "var(--green)", multOf(r.real_end, inv))}${bar("Buying Power, No Dividends", r.price_only, m, "var(--teal)", multOf(r.price_only, inv))}${bar("Invested", r.scaled, m, "var(--border)", "1x")}</div>`; };
+// Bar chart shows growth multiples (852x, 74x, 12x), not dollars.
+const bars = r => { const inv = r.investment, m = Math.max(r.real_end, r.nom_end, r.price_only);
+  return `<div class="bar-container">${bar("Nominal Ending Dollars", r.nom_end, m, "var(--gold)", multOf(r.nom_end, inv))}${bar("Buying Power ★", r.real_end, m, "var(--green)", multOf(r.real_end, inv))}${bar("Buying Power, No Dividends", r.price_only, m, "var(--teal)", multOf(r.price_only, inv))}</div>`; };
 const metric = (label, val, color = "", sub = "") => `<div class="metric-card"><div class="metric-label">${label}</div>
   <div class="metric-val ${color}">${val}</div>${sub ? `<div class="metric-sub">${sub}</div>` : ""}</div>`;
 const metricsGrid = r => `<div class="grid3">${[
