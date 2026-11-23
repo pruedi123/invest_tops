@@ -36,7 +36,8 @@
     const rtrS = start[9], rtrE = end[9];
     const rpS = start[7], rpE = end[7];
 
-    const scaled = investment * (cpiS / cpiE);
+    // The same dollar amount goes in on every start date (no CPI scaling of the starting amount).
+    const scaled = investment;
     const cpiFactor = cpiE / cpiS;
     const realTrF = rtrE / rtrS;
     const nomTrF = realTrF * cpiFactor;

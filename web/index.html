@@ -249,7 +249,7 @@ function card(s, r, inv, desc, rich) {
       <div><div class="card-val-label">★ Real Value</div><div class="card-result-val">${fmt(r.real_end)}</div></div></div>
     <div class="chev">▶</div></summary>
     <div class="card-body">
-      <div class="conversion-note">Invested <strong>${fmt(r.scaled)}</strong> (CPI ${r.cpi_start} → ${r.cpi_end}) — equivalent purchasing power of <strong>${fmt(inv)}</strong> today.</div>
+      <div class="conversion-note">Invested <strong>${fmt(inv)}</strong> in ${r.start_str}. Prices rose ${r.cpi_factor}x since then (CPI ${r.cpi_start} → ${r.cpi_end}); the ★ real value takes that inflation out.</div>
       <div class="narrative">${s.narrative}</div>
       ${rich && s.quote ? `<div class="era-quote"><blockquote>"${s.quote}"</blockquote><div class="quote-attr">— ${s.quote_attr}</div></div>` : ""}
       ${rich && s.pain ? `<div class="pain-box"><strong>The Pain</strong><br>${s.pain}</div>` : ""}
@@ -287,30 +287,28 @@ function keepOpen(el, html) {
   const p = $("#p-top");
   p.innerHTML = `<div class="eyebrow">S&amp;P 500 · Shiller CAPE Data · Total Return With Dividends Reinvested</div>
     <h1 class="hero-title">What If You Bought At The <em>Very Top?</em></h1>${BYLINE}
-    ${amountBox("amt-top", "Investment amount (today's dollars)")}<div id="top-out"></div>`;
+    ${amountBox("amt-top", "Investment amount")}<div id="top-out"></div>`;
   const out = $("#top-out");
   function render(inv) {
     const res = SCENARIOS.map(s => analyze(s.date, inv, ROWS));
-    const s5 = res[4], s5scaled = inv * (s5.cpi_start / s5.cpi_end), covid = res[res.length - 1];
+    const covid = res[res.length - 1];
     keepOpen(out, `
-      <div class="hero-subtitle">"Every generation believes the market is overvalued and ready to crash. Here is what actually happened to someone with the equivalent of
-        <strong>${fmt(inv)}</strong> in today's money who bought at the absolute peak of every major bubble — and simply held."<span class="who">— Paul Ruedi</span></div>
-      <div class="method-box"><h3>📐 How We Made This Apples-to-Apples</h3><div class="method-grid">
-        <div><p>A flat ${fmt(inv)} at each peak is misleading. That amount in 1929 would be a fortune; in 2020 it's a modest sum.
-          To compare honestly, we scale every investment using CPI so each one represents the <strong>same real purchasing power</strong> as ${fmt(inv)} today.</p>
-          <p style="margin-top:10px">Every dollar figure on this page is computed live from factor multipliers — change the amount above and every number updates instantly.</p></div>
-        <div class="formula-box"><strong style="color:var(--teal)">Example — ${s5.start_str}:</strong><br>CPI then: ${s5.cpi_start} · CPI now: ${s5.cpi_end}<br>
-          ${fmt(inv)} × (${s5.cpi_start} ÷ ${s5.cpi_end.toFixed(1)})<br>= <strong style="color:var(--teal)">${fmt(s5scaled)}</strong> invested in ${s5.start_str.slice(-4)} dollars</div>
+      <div class="hero-subtitle">"Every generation believes the market is overvalued and ready to crash. Here is what would have happened to
+        <strong>${fmt(inv)}</strong> put into the S&amp;P 500 at the absolute peak of every major bubble — and simply held."<span class="who">— Paul Ruedi</span></div>
+      <div class="method-box"><h3>📐 How To Read These Numbers</h3><div class="method-grid">
+        <div><p>Each scenario puts the same <strong>${fmt(inv)}</strong> into the S&amp;P 500 on the date shown, reinvests every dividend, and holds to today.</p>
+          <p style="margin-top:10px">Change the amount above and every number updates instantly.</p></div>
+        <div class="formula-box"><strong style="color:var(--teal)">Two ending values on every card:</strong><br>
+          <strong>Nominal</strong> — the dollar balance you would see on your statement today.<br>
+          <strong style="color:var(--gold)">★ Real</strong> — the same balance with inflation taken out, so it shows how much your buying power actually grew.</div>
       </div></div>
-      <div class="section-label">The Equivalent Dollar Amount Invested At Each Peak</div>
-      <div class="grid4">${res.map(r => `<div class="cpi-tile"><div class="cpi-date">${r.start_str}</div><div class="cpi-amt">${fmt(r.scaled)}</div><div class="cpi-eq">≡ ${fmt(inv)} today</div></div>`).join("")}</div>
       <div class="fear-bar"><div class="fear-row"><div class="fear-icon">⚠️</div><div style="flex:1;min-width:0">
         <div class="fear-header">The Narrative At Every Single Peak</div>
         <div class="fear-text">"Valuations are stretched." · "The market can't go higher." · "A crash is inevitable." · People have said this at every single peak — 1929, 1968, 2000, 2007, the pandemic crash of 2020, and today.</div></div>
         <div class="fear-badge">EVERY SINGLE TIME, THEY WERE RIGHT ABOUT THE CRASH — AND WRONG ABOUT WHAT FOLLOWED.</div></div></div>
       <div class="section-label">Nine Moments of Maximum Pessimism · Nine Investors · One Result</div>
       ${SCENARIOS.map((s, i) => card(s, res[i], inv, s.peak_desc, true)).join("")}
-      <div class="closing-quote">Every investor with the equivalent of ${fmt(inv)} in today's money who bought at the peaks, at the worst moments, even when the experts declared stocks dead — and simply held — made money. In every single case.</div>
+      <div class="closing-quote">Every investor who put ${fmt(inv)} in at the peaks, at the worst moments, even when the experts declared stocks dead — and simply held — made money. In every single case.</div>
       <div class="closing-tagline">"The risk was never buying at the top. The risk was not buying at all."<span>— Paul Ruedi</span></div>
       <div class="section-label">Summary Comparison</div>
       ${summaryTable(SCENARIOS.map((s, i) => `<tr><td>${res[i].start_str} · ${s.short}</td><td>${s.crash}</td>${factorCells(res[i])}</tr>`).join(""), ["Peak / Crisis", "Crash After"])}
@@ -331,20 +329,20 @@ function keepOpen(el, html) {
   const p = $("#p-wars");
   p.innerHTML = `<div class="eyebrow">S&amp;P 500 · Shiller CAPE Data · Total Return With Dividends Reinvested</div>
     <h1 class="hero-title">What If You Invested When <em>Wars Started?</em></h1>${BYLINE}
-    ${amountBox("amt-war", "Investment amount (today's dollars)")}<div id="war-out"></div>`;
+    ${amountBox("amt-war", "Investment amount")}<div id="war-out"></div>`;
   const out = $("#war-out"), n = WAR_SCENARIOS.length;
   function render(inv) {
     const res = WAR_SCENARIOS.map(s => analyze(s.date, inv, ROWS));
     keepOpen(out, `
       <div class="hero-subtitle">"Wars are the ultimate test of investor nerve. Every major conflict of the past century triggered panic, uncertainty, and predictions of economic collapse.
-        Here is what actually happened to someone with the equivalent of <strong>${fmt(inv)}</strong> in today's money who invested in the S&amp;P 500 the month each war began — and simply held."<span class="who">— Paul Ruedi</span></div>
+        Here is what would have happened to <strong>${fmt(inv)}</strong> put into the S&amp;P 500 the month each war began — and simply held."<span class="who">— Paul Ruedi</span></div>
       <div class="fear-bar"><div class="fear-row"><div class="fear-icon">⚔️</div><div style="flex:1;min-width:0">
         <div class="fear-header">The Headline At Every War's Outbreak</div>
         <div class="fear-text">"This changes everything." · "The economy can't survive this." · "Get out of stocks now." · Every war brought genuine terror, real casualties, and dire predictions for markets. Every single time, the long-term investor who stayed the course came out ahead.</div></div>
         <div class="fear-badge">WARS END. MARKETS DON'T.</div></div></div>
       <div class="section-label">${n} Wars · ${n} Investments · One Result</div>
       ${WAR_SCENARIOS.map((s, i) => card(s, res[i], inv, s.desc, false)).join("")}
-      <div class="closing-quote">Every investor with the equivalent of ${fmt(inv)} in today's money who invested when wars broke out — during the most frightening geopolitical moments of the past century — and simply held, made money. In every single case.</div>
+      <div class="closing-quote">Every investor who put ${fmt(inv)} in when wars broke out — during the most frightening geopolitical moments of the past century — and simply held, made money. In every single case.</div>
       <div class="closing-tagline">"Wars end. Recessions end. Bear markets end. Exposed long-term returns to the S&amp;P 500 never have."<span>— Paul Ruedi</span></div>
       <div class="section-label">Summary Comparison</div>
       ${summaryTable(WAR_SCENARIOS.map((s, i) => `<tr><td>${s.short}</td><td>${res[i].start_str}</td>${factorCells(res[i])}</tr>`).join(""), ["War", "Started"])}
@@ -385,9 +383,9 @@ function keepOpen(el, html) {
       $("#sd-y").value = y; target = y + Number($("#sd-m").value) / 100;
     }
     const inv = readAmt(), r = analyze(target, inv, ROWS);
-    $("#sd-out").innerHTML = `<div class="eyebrow" style="margin-top:36px">${r.start_str} → ${r.end_str} · ${fmt(inv)} invested (today's dollars)</div>
+    $("#sd-out").innerHTML = `<div class="eyebrow" style="margin-top:36px">${r.start_str} → ${r.end_str} · ${fmt(inv)} invested</div>
       <div class="grid3" style="margin-top:20px">${[
-        metric("CPI-Adjusted Amount Invested", fmt(r.scaled), "teal"), metric("★ Real Ending Value", fmt(r.real_end), "gold"),
+        metric("Amount Invested", fmt(r.scaled), "teal"), metric("★ Real Ending Value", fmt(r.real_end), "gold"),
         metric("Nominal Ending Value", fmt(r.nom_end)), metric("Price Only (Real)", fmt(r.price_only)),
         metric("Inflation (CPI)", `${r.cpi_factor}x`), metric("Holding Period", `${r.years} years`),
         metric("Earnings Growth (Nominal)", fmtX(r.earn_nom_f)), metric("Earnings Growth (Real)", fmtX(r.earn_real_f)),
