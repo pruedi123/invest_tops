@@ -819,7 +819,7 @@ with tab1:
                           on_click=set_preset, args=(val,))
         investment = st.number_input(
             "Investment amount (today's dollars)",
-            min_value=1,
+            min_value=1000,
             max_value=100_000_000,
             value=100_000,
             step=10_000,
@@ -1097,7 +1097,7 @@ with tab2:
                           on_click=set_war_preset, args=(val,))
         war_investment = st.number_input(
             "Investment amount (today's dollars)",
-            min_value=1,
+            min_value=1000,
             max_value=100_000_000,
             value=100_000,
             step=10_000,
@@ -1331,7 +1331,7 @@ with tab3:
                           on_click=set_single_preset, args=(val,))
         single_investment = st.number_input(
             "Investment amount ($)",
-            min_value=1,
+            min_value=100,
             max_value=100_000_000,
             value=100_000,
             step=10_000,
