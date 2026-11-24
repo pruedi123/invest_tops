@@ -83,7 +83,7 @@ select, .plain { background: #fff; border: 1px solid var(--border); border-radiu
 
 /* Scenario cards */
 details.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
-details.card > summary { list-style: none; cursor: pointer; display: flex; align-items: center; padding: 18px 24px; gap: 16px; }
+details.card > summary { list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; padding: 18px 24px; gap: 16px; }
 details.card > summary::-webkit-details-marker { display: none; }
 details.card > summary:hover { background: #fffcf2; }
 .card-num { font-family: var(--serif); font-size: 28px; font-weight: 700; color: var(--border); width: 36px; flex-shrink: 0; }
@@ -91,7 +91,10 @@ details.card > summary:hover { background: #fffcf2; }
 .card-title { font-family: var(--serif); font-size: 18px; font-weight: 600; }
 .card-peak { font-size: 11px; color: var(--muted); }
 .card-vals { display: flex; gap: 18px; flex-shrink: 0; text-align: right; }
-.card-val-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+.card-vals > div { max-width: 150px; }
+.card-val-label { font-size: 11px; line-height: 1.3; color: var(--muted); margin-bottom: 2px; }
+.card-nom-val { font-size: 20px; color: var(--text); font-weight: 500; }
+.card-explain { flex-basis: 100%; font-size: 15px; line-height: 1.6; color: var(--text); background: rgba(184,134,11,.08); border-radius: 6px; padding: 12px 16px; margin-top: 4px; }
 .card-invested-val { font-size: 14px; color: var(--teal); font-weight: 500; }
 .card-result-val { font-size: 20px; color: var(--gold); font-weight: 500; }
 .chev { color: var(--muted); font-size: 12px; transition: transform .2s; flex-shrink: 0; }
@@ -166,7 +169,8 @@ table.analysis { font-size: 13px; min-width: 480px; }
   details.card > summary { flex-wrap: wrap; padding: 16px; gap: 10px; }
   .card-num { width: auto; font-size: 22px; }
   .card-main { flex-basis: calc(100% - 60px); }
-  .card-vals { width: 100%; justify-content: flex-start; text-align: left; gap: 28px; padding-left: 2px; }
+  .card-vals { width: 100%; justify-content: flex-start; text-align: left; gap: 20px; padding-left: 2px; flex-wrap: wrap; }
+  .card-vals > div { max-width: 140px; }
   .chev { display: none; }
   .card-body { padding: 4px 16px 18px; }
   .method-box, .fear-bar, .glance { padding: 20px; }
@@ -201,7 +205,8 @@ table.analysis { font-size: 13px; min-width: 480px; }
 <script>
 const { analyze, fmt, fmtX, fmtEps, dateStr, findLastComplete, findLastWithEarnings, findRow, MONTHS } = Engine;
 const ROWS = window.SHILLER;
-const DATA_END = dateStr(findLastComplete(ROWS)[0]);
+// Exact day when build_data.py spliced in a live Yahoo price; otherwise Shiller's month.
+const DATA_END = window.PRICE_AS_OF || dateStr(findLastComplete(ROWS)[0]);
 const SITE = location.host || "investtops.vercel.app";
 const $ = (s, el = document) => el.querySelector(s);
 
@@ -299,21 +304,26 @@ const bars = r => {
 const metric = (label, val, color = "", sub = "") => `<div class="metric-card"><div class="metric-label">${label}</div>
   <div class="metric-val ${color}">${val}</div>${sub ? `<div class="metric-sub">${sub}</div>` : ""}</div>`;
 const metricsGrid = r => `<div class="grid3">${[
-  metric("Invested", fmt(r.scaled), "teal"), metric(`★ Buying Power (${yr(r)} dollars)`, fmt(r.real_end), "gold"),
-  metric("Nominal Ending Value", fmt(r.nom_end)), metric("Buying Power, No Dividends", fmt(r.price_only)),
+  metric("Invested", fmt(r.scaled), "teal"), metric(`What that balance could buy, in ${yr(r)} dollars`, fmt(r.real_end), "gold"),
+  metric("Your ending account balance", fmt(r.nom_end)), metric("Buying Power, No Dividends", fmt(r.price_only)),
   metric("Dividend Growth (Real)", fmtX(r.div_real_f)), metric("Holding Period", `${r.years} years`),
   metric("Earnings Growth (Nominal)", fmtX(r.earn_nom_f)), metric("Earnings Growth (Real)", fmtX(r.earn_real_f)),
   metric("Real Earnings / Share", `${fmtEps(r.earn_real_start)} → ${fmtEps(r.earn_real_end)}`)].join("")}</div>`;
 
-function card(s, r, inv, desc, rich) {
+const END_YEAR = () => Math.trunc(findLastComplete(ROWS)[0]);
+// Plain-English bridge between the two ending numbers (shown on the first card only).
+const explainLine = r => `<div class="card-explain">Your account would have held <strong>${words(r.nom_end)}</strong> in ${END_YEAR()}.
+  Back in ${yr(r)}, <strong style="color:var(--gold)">${words(r.real_end)}</strong> could buy about as much as that ending balance could buy in ${END_YEAR()}.</div>`;
+function card(s, r, inv, desc, rich, explain = false) {
   return `<details class="card"><summary>
     <div class="card-num">${s.num}</div>
     <div class="card-main"><div class="card-title">${s.label} · ${r.start_str}</div><div class="card-peak">${desc}</div></div>
     <div class="card-vals"><div><div class="card-val-label">Invested</div><div class="card-invested-val">${fmt(r.scaled)}</div></div>
-      <div><div class="card-val-label">★ Buying Power (${yr(r)} $)</div><div class="card-result-val">${fmt(r.real_end)}</div></div></div>
-    <div class="chev">▶</div></summary>
+      <div><div class="card-val-label">Your ending account balance</div><div class="card-nom-val">${fmt(r.nom_end)}</div></div>
+      <div><div class="card-val-label">What that balance could buy, in ${yr(r)} dollars</div><div class="card-result-val">${fmt(r.real_end)}</div></div></div>
+    <div class="chev">▶</div>${explain ? explainLine(r) : ""}</summary>
     <div class="card-body">
-      <div class="conversion-note">Invested <strong>${fmt(inv)}</strong> in ${r.start_str}. Prices rose ${r.cpi_factor}x since then (CPI ${r.cpi_start} → ${r.cpi_end}); the ★ buying power figure takes that inflation out and states the result in ${yr(r)} dollars. In today's dollars the account holds ${fmt(r.nom_end)}.</div>
+      <div class="conversion-note">Invested <strong>${fmt(inv)}</strong> in ${r.start_str}. Prices rose ${r.cpi_factor}x since then (CPI ${r.cpi_start} → ${r.cpi_end}); “what that balance could buy” takes that inflation out and states the result in ${yr(r)} dollars. Your ending account balance is ${fmt(r.nom_end)}.</div>
       <div class="narrative">${s.narrative}</div>
       ${rich && s.quote ? `<div class="era-quote"><blockquote>"${s.quote}"</blockquote><div class="quote-attr">— ${s.quote_attr}</div></div>` : ""}
       ${rich && s.pain ? `<div class="pain-box"><strong>The Pain</strong><br>${s.pain}</div>` : ""}
@@ -323,7 +333,7 @@ function card(s, r, inv, desc, rich) {
 
 function summaryTable(rowsHtml, firstCols) {
   return `<div class="table-scroll"><table class="t"><thead><tr>${firstCols.map(c => `<th>${c}</th>`).join("")}<th>Invested</th>
-    <th>★ Buying Power (start-year $)</th><th>Real TR Factor</th><th>Real Div Factor</th><th>Real Earn Factor</th><th>Years</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
+    <th>What that balance could buy (start-year $)</th><th>Times as much buying power</th><th>Real Div Factor</th><th>Real Earn Factor</th><th>Years</th></tr></thead><tbody>${rowsHtml}</tbody></table></div>`;
 }
 const factorCells = r => `<td class="col-teal">${fmt(r.scaled)}</td><td class="col-gold">${fmt(r.real_end)}</td>
   <td>${fmtX(r.real_tr_f)}</td><td>${fmtX(r.div_real_f)}</td><td>${fmtX(r.earn_real_f)}</td><td>${r.years}</td>`;
@@ -331,9 +341,9 @@ const factorCells = r => `<td class="col-teal">${fmt(r.scaled)}</td><td class="c
 function glance(list, results, title, footLine) {
   const cagrs = results.map(r => r.years ? Math.pow(r.real_tr_f, 1 / r.years) - 1 : 0);
   const max = Math.max(...cagrs, 0.10);
-  return `<div class="glance"><h4>${title}</h4><div class="sub">Annualized real return · inflation stripped out · dividends reinvested</div>
+  return `<div class="glance"><h4>${title}</h4><div class="sub">Each bar shows the steady yearly growth rate that would give you the same final buying power. The actual gains and losses varied from year to year.</div>
     ${list.map((s, i) => `<div class="g-row"><div class="g-head"><span><strong>${s.short}</strong> · ${results[i].start_str} <span style="color:var(--muted)">(${results[i].years}y)</span></span>
-      <span><span style="color:var(--teal);font-weight:700">${(cagrs[i] * 100).toFixed(1)}% / yr</span> <span style="color:var(--muted)">→ ${fmtX(results[i].real_tr_f)} total</span></span></div>
+      <span><span style="color:var(--teal);font-weight:700">${(cagrs[i] * 100).toFixed(1)}% / yr</span> <span style="color:var(--muted)">→ ${fmtX(results[i].real_tr_f)} as much buying power</span></span></div>
       <div class="g-track"><div class="g-fill" style="width:${(max ? cagrs[i] / max * 100 : 0).toFixed(1)}%"></div></div></div>`).join("")}
     <div class="foot" style="font-style:italic">${footLine}</div>
     <div class="foot" style="margin-top:10px">Source: Shiller <em>Irrational Exuberance</em> dataset · data through ${DATA_END} · ${SITE}</div></div>`;
@@ -363,26 +373,26 @@ function keepOpen(el, html) {
         <div><p>Each scenario puts the same <strong>${fmt(inv)}</strong> into the S&amp;P 500 on the date shown, reinvests every dividend, and holds to today.</p>
           <p style="margin-top:10px">Change the amount above and every number updates instantly.</p></div>
         <div class="formula-box"><strong style="color:var(--teal)">Two ending values on every card:</strong><br>
-          <strong>Nominal</strong> — the dollar balance you would see on your statement today.<br>
-          <strong style="color:var(--gold)">★ Buying power</strong> — the same balance with inflation taken out, stated in dollars of the year you invested. It shows how much your buying power actually grew.</div>
+          <strong>Your ending account balance</strong> — the dollar balance you would see on your statement today.<br>
+          <strong style="color:var(--gold)">What that balance could buy</strong> — the same balance with inflation taken out, stated in dollars of the year you invested. It shows how much your buying power actually grew.</div>
       </div></div>
       <div class="fear-bar"><div class="fear-row"><div class="fear-icon">⚠️</div><div style="flex:1;min-width:0">
         <div class="fear-header">The Narrative At Every Single Peak</div>
         <div class="fear-text">"Valuations are stretched." · "The market can't go higher." · "A crash is inevitable." · People have said this at every single peak — 1929, 1968, 2000, 2007, the pandemic crash of 2020, and today.</div></div>
         <div class="fear-badge">EVERY SINGLE TIME, THEY WERE RIGHT ABOUT THE CRASH — AND WRONG ABOUT WHAT FOLLOWED.</div></div></div>
       <div class="section-label">Nine Moments of Maximum Pessimism · Nine Investors · One Result</div>
-      ${SCENARIOS.map((s, i) => card(s, res[i], inv, s.peak_desc, true)).join("")}
+      ${SCENARIOS.map((s, i) => card(s, res[i], inv, s.peak_desc, true, i === 0)).join("")}
       <div class="closing-quote">Every investor who put ${fmt(inv)} in at the peaks, at the worst moments, even when the experts declared stocks dead — and simply held — made money. In every single case.</div>
       <div class="closing-tagline">"The risk was never buying at the top. The risk was not buying at all."<span>— Paul Ruedi</span></div>
       <div class="section-label">Summary Comparison</div>
       ${summaryTable(SCENARIOS.map((s, i) => `<tr><td>${res[i].start_str} · ${s.short}</td><td>${s.crash}</td>${factorCells(res[i])}</tr>`).join(""), ["Peak / Crisis", "Crash After"])}
-      <div class="section-label">At A Glance — Annualized Real Return</div>
+      <div class="section-label">How fast did your buying power grow each year?</div>
       ${glance(SCENARIOS, res, "Even At The Worst Moment — What Patience Earned You", "Every scenario earned a positive real return — even buying the day before the crash.")}
-      <div class="method-box" style="margin-top:32px;border-color:var(--gold)"><h3 style="color:var(--gold)">What Does "${shownX(covid)}" Real Return Mean?</h3>
-        <p style="font-size:15px;line-height:1.8">Take the Pre-Pandemic Peak as an example. The Real Total Return Factor is <strong style="color:var(--gold)">${shownX(covid)}</strong>.
+      <div class="method-box" style="margin-top:32px;border-color:var(--gold)"><h3 style="color:var(--gold)">What Does "${shownX(covid)} Times As Much Buying Power" Mean?</h3>
+        <p style="font-size:15px;line-height:1.8">Take the Pre-Pandemic Peak as an example. The investor ended with <strong style="color:var(--gold)">${shownX(covid).replace(/x$/, "")} times as much buying power</strong>.
         That means whatever your money could buy in ${covid.start_str} — a car, a vacation, a month of groceries — your investment can now buy <strong style="color:var(--gold)">${shownX(covid)}</strong> as much.
         Not ${shownX(covid)} as many dollars. ${shownX(covid)} as much <em>stuff</em>. All price increases have already been stripped out.</p>
-        <p style="font-size:15px;line-height:1.8;margin-top:10px">The same logic applies to every scenario on this page. The 1929 investor's ${shownX(res[0])} factor means every dollar of purchasing power they invested can now buy ${shownX(res[0])} as much as it could in ${res[0].start_str}.</p></div>
+        <p style="font-size:15px;line-height:1.8;margin-top:10px">The same logic applies to every scenario on this page. The 1929 investor's ${shownX(res[0]).replace(/x$/, "")} times as much buying power means every dollar of purchasing power they invested can now buy ${shownX(res[0])} as much as it could in ${res[0].start_str}.</p></div>
       ${FOOTER}`);
   }
   wireAmount("amt-top", 1000, render); render(100000);
@@ -410,7 +420,7 @@ function keepOpen(el, html) {
       <div class="closing-tagline">"Wars end. Recessions end. Bear markets end. Exposed long-term returns to the S&amp;P 500 never have."<span>— Paul Ruedi</span></div>
       <div class="section-label">Summary Comparison</div>
       ${summaryTable(WAR_SCENARIOS.map((s, i) => `<tr><td>${s.short}</td><td>${res[i].start_str}</td>${factorCells(res[i])}</tr>`).join(""), ["War", "Started"])}
-      <div class="section-label">At A Glance — Annualized Real Return</div>
+      <div class="section-label">How fast did your buying power grow each year?</div>
       ${glance(WAR_SCENARIOS, res, "Even When War Broke Out — What Patience Earned You", "Every war-era investor earned a positive real return — markets rewarded patience through every one.")}
       ${FOOTER}`);
   }
