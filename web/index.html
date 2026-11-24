@@ -240,7 +240,7 @@ function wireAmount(id, min, onChange) {
 
 const yr = r => r.start_str.slice(-4);
 // Multiples match the rounded dollars on screen: $7.4M on $100,000 reads "74x", not "73.8x".
-const shownDollars = v => { const a = Math.abs(v); return a >= 1e9 ? Math.round(v / 1e8) * 1e8 : a >= 1e6 ? Math.round(v / 1e5) * 1e5 : Math.round(v); };
+const shownDollars = v => { const a = Math.abs(v); return a >= 1e9 ? Math.round(v / 1e8) * 1e8 : a >= 1e6 ? Math.round(v / 1e5) * 1e5 : a < 100 ? Math.round(v * 100) / 100 : Math.round(v); };
 const multOf = (v, inv) => Number((shownDollars(v) / inv).toFixed(2)).toLocaleString("en-US", { maximumFractionDigits: 2 }) + "x";
 const shownX = r => multOf(r.real_end, r.investment);
 const bar = (label, value, max, color, text) => `<div class="bar-row"><div class="bar-label-text">${label}</div>
@@ -395,7 +395,7 @@ function keepOpen(el, html) {
         <p style="font-size:15px;line-height:1.8;margin-top:10px">The same logic applies to every scenario on this page. The 1929 investor's ${shownX(res[0]).replace(/x$/, "")} times as much buying power means every dollar of purchasing power they invested can now buy ${shownX(res[0])} as much as it could in ${res[0].start_str}.</p></div>
       ${FOOTER}`);
   }
-  wireAmount("amt-top", 1000, render); render(100000);
+  wireAmount("amt-top", 1, render); render(100000);
 })();
 
 /* ── TAB 2: Wars ── */
@@ -424,7 +424,7 @@ function keepOpen(el, html) {
       ${glance(WAR_SCENARIOS, res, "Even When War Broke Out — What Patience Earned You", "Every war-era investor earned a positive real return — markets rewarded patience through every one.")}
       ${FOOTER}`);
   }
-  wireAmount("amt-war", 1000, render); render(100000);
+  wireAmount("amt-war", 1, render); render(100000);
 })();
 
 /* ── TAB 3: Single date ── */
@@ -438,8 +438,8 @@ function keepOpen(el, html) {
       <div class="seg" id="sd-mode"><button type="button" data-m="event">Historical event</button><button type="button" data-m="custom" class="on">Custom date</button></div>
       <div id="sd-event" hidden><label class="fld" for="sd-ev">Select an event</label>
         <select id="sd-ev">${Object.keys(DATE_ALIASES).map(k => `<option>${k}</option>`).join("")}</select></div>
-      <div id="sd-custom" class="ym"><div><label class="fld" for="sd-y">Year</label><input class="plain" id="sd-y" type="number" min="1871" max="${lastYear}" value="1959"></div>
-        <div><label class="fld" for="sd-m">Month</label><select id="sd-m">${MONTHS.map((m, i) => `<option value="${i + 1}"${i === 10 ? " selected" : ""}>${m}</option>`).join("")}</select></div></div>
+      <div id="sd-custom" class="ym"><div><label class="fld" for="sd-y">Year</label><input class="plain" id="sd-y" type="number" min="1871" max="${lastYear}" value="2000"></div>
+        <div><label class="fld" for="sd-m">Month</label><select id="sd-m">${MONTHS.map((m, i) => `<option value="${i + 1}"${i === 0 ? " selected" : ""}>${m}</option>`).join("")}</select></div></div>
     </div><div>${amountBox("amt-single", "Investment amount ($)").replace('class="amount"', 'class="amount" style="margin:0"')}</div></div>
     <button type="button" class="go" id="sd-go">Analyze</button><div id="sd-out"></div>`;
   let mode = "custom";
@@ -448,12 +448,12 @@ function keepOpen(el, html) {
     $("#sd-mode").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
     $("#sd-event").hidden = mode !== "event"; $("#sd-custom").hidden = mode !== "custom";
   });
-  const readAmt = wireAmount("amt-single", 100, () => {});
+  const readAmt = wireAmount("amt-single", 1, () => {});
   $("#sd-go").addEventListener("click", () => {
     let target;
     if (mode === "event") target = DATE_ALIASES[$("#sd-ev").value];
     else {
-      const y = Math.min(lastYear, Math.max(1871, Math.trunc(Number($("#sd-y").value) || 1959)));
+      const y = Math.min(lastYear, Math.max(1871, Math.trunc(Number($("#sd-y").value) || 2000)));
       $("#sd-y").value = y; target = y + Number($("#sd-m").value) / 100;
     }
     const inv = readAmt(), r = analyze(target, inv, ROWS);

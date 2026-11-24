@@ -71,16 +71,16 @@
       end_str: dateStr(end[0]),
       start_date: start[0],
       investment,
-      scaled: pyRound(scaled, 0),
+      scaled: pyRound(scaled, 2),
       cpi_start: pyRound(cpiS, 3),
       cpi_end: pyRound(cpiE, 3),
       cpi_factor: pyRound(cpiFactor, 2),
       real_tr_f: pyRound(realTrF, 2),
       nom_tr_f: pyRound(nomTrF, 1),
-      real_end: pyRound(realEnd, 0),
-      nom_end: pyRound(nomEnd, 0),
+      real_end: pyRound(realEnd, 2),
+      nom_end: pyRound(nomEnd, 2),
       price_r_f: pyRound(priceRF, 2),
-      price_only: pyRound(priceOnly, 0),
+      price_only: pyRound(priceOnly, 2),
       div_nom_f: r(divNomF, 1),
       div_real_f: r(divRealF, 1),
       div_start_r: r(divStartR, 2),
@@ -110,7 +110,7 @@
     if (a >= 1e9) return `$${(n / 1e9).toFixed(1)}B`;
     if (a >= 1e6) return `$${(n / 1e6).toFixed(1)}M`;
     if (a >= 1e3) return `$${comma(n)}`;
-    return `$${n.toFixed(0)}`;
+    return a < 100 ? `$${n.toFixed(2)}` : `$${n.toFixed(0)}`;
   }
   function fmtX(n) {
     if (n === null || n === undefined) return "—";
