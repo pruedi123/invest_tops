@@ -81,6 +81,14 @@ select, .plain { background: #fff; border: 1px solid var(--border); border-radiu
 .fear-badge { border: 2px solid var(--red); border-radius: 8px; background: #fff; padding: 14px 18px; font-size: 11px; line-height: 1.5;
   color: var(--red); text-align: center; font-weight: 500; margin-top: 16px; width: 100%; }
 
+.bears { margin: 24px 0 0; padding: 20px 24px; border: 1px solid var(--border); border-left: 4px solid #b5482f; border-radius: 10px; background: #fff; }
+.bears h3 { margin: 0 0 6px; font-family: var(--serif); font-size: 22px; color: #b5482f; }
+.bears p { margin: 0 0 12px; font-size: 15px; line-height: 1.7; color: var(--text); }
+.bear-list { display: flex; flex-wrap: wrap; gap: 6px; }
+.bear-chip { font-size: 13px; padding: 3px 9px; border-radius: 4px; background: #f6efe9; color: var(--text); white-space: nowrap; }
+.bear-chip.half { background: #b5482f; color: #fff; }
+.bears .small-note { margin-top: 10px; }
+
 /* Scenario cards */
 details.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
 details.card > summary { list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; padding: 18px 24px; gap: 16px; }
@@ -260,6 +268,27 @@ function bpHero(r, inv) {
     <div class="bp-text">That's ${x} times the original purchasing power, even after inflation.</div>
     <div class="bp-foot">Assumes dividends reinvested. Historical performance does not guarantee future results.</div></div>`;
 }
+
+// Bear markets lived through: 18%+ drop from the running high (Paul's line), counted from the start month.
+const BEAR_NUM = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+const numW = n => (n <= 10 ? BEAR_NUM[n] : String(n));
+function bearsFor(r) {
+  const ids = (window.BEAR_BY_MONTH || {})[Number(r.start_date).toFixed(2)];
+  return ids ? ids.map(i => window.BEARS[i]) : null;
+}
+function bearPanel(r) {
+  const list = bearsFor(r); if (!list) return "";
+  const half = list.filter(b => b[2] <= -window.BEAR_RULE.half * 100).length;
+  const span = b => { const a = b[0].slice(0, 4), z = b[1].slice(0, 4); return a === z ? a : `${a}–${z.slice(2)}`; };
+  const x = shownX(r).replace(/x$/, "");
+  const lead = list.length === 0 ? "You would not have sat through a single bear market (a drop of 18% or more) along the way."
+    : `Along the way you would have sat through <strong>${numW(list.length)} bear market${list.length === 1 ? "" : "s"}</strong> (drops of 18% or more)${half ? `, and <strong>${half === 1 ? "once" : numW(half) + " times"}</strong> the market was cut roughly in half` : ""}.`;
+  const tail = list.length && shownDollars(r.real_end) > r.investment ? ` You still ended with ${x} times the buying power you started with — if you didn't sell.` : "";
+  return `<div class="bears"><h3>${list.length} Bear Market${list.length === 1 ? "" : "s"}${half ? ` · ${half}× Cut In Half` : ""}</h3>
+    <p>${lead}${tail}</p>
+    ${list.length ? `<div class="bear-list">${list.map(b => `<span class="bear-chip${b[2] <= -window.BEAR_RULE.half * 100 ? " half" : ""}">${span(b)} ${b[2].toFixed(0).replace("-", "−")}%${b[3] ? "" : " (ongoing)"}</span>`).join("")}</div>` : ""}
+    <div class="small-note">S&amp;P 500 daily closes, price only, from ${longDate(r.start_date)}. A bear market here = a fall of 18% or more from the high; it ends at a new high or a 25% rally off the low. Dark = fell 45% or more (cut roughly in half).${r.start_date < 1928 ? " Before 1928, monthly averages." : ""}</div></div>`;
+}
 // Inflation-hedge panel: cost of living vs. dividends vs. $1 owned (all nominal multiples).
 const timesX = v => (v >= 20 ? Math.round(v).toLocaleString("en-US") : v >= 10 ? v.toFixed(1) : v.toFixed(2));
 // Plain-English growth: "nearly doubled", "grew more than fivefold", "rose 31%".
@@ -327,7 +356,7 @@ function card(s, r, inv, desc, rich, explain = false) {
       <div class="narrative">${s.narrative}</div>
       ${rich && s.quote ? `<div class="era-quote"><blockquote>"${s.quote}"</blockquote><div class="quote-attr">— ${s.quote_attr}</div></div>` : ""}
       ${rich && s.pain ? `<div class="pain-box"><strong>The Pain</strong><br>${s.pain}</div>` : ""}
-      ${metricsGrid(r)}${bars(r)}
+      ${bearPanel(r)}${metricsGrid(r)}${bars(r)}
     </div></details>`;
 }
 
@@ -458,6 +487,7 @@ function keepOpen(el, html) {
     }
     const inv = readAmt(), r = analyze(target, inv, ROWS);
     $("#sd-out").innerHTML = `${bpHero(r, inv)}
+      ${bearPanel(r)}
       ${hedgePanel(r)}
       <div class="grid3" style="margin-top:20px">${[
         metric("Amount Invested", fmt(r.scaled), "teal"), metric(`★ Buying Power (${yr(r)} dollars)`, fmt(r.real_end), "gold"),
