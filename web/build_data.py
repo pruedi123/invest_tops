@@ -6,8 +6,8 @@ Usage (from the invest_tops folder):
     python3 web/build_data.py --no-live                     # Shiller only (offline)
 then deploy:  cd web && vercel deploy --prod
 
-Live-price step: pulls the latest S&P 500 (^GSPC) price from Yahoo Finance (no key needed);
-  during market hours that is today's price, otherwise the last close.
+Live-price step: pulls the last COMPLETED S&P 500 (^GSPC) daily close from Yahoo Finance (no key needed);
+  run during market hours it uses yesterday's close, never today's moving price.
   - Same month as Shiller's last row -> replaces that row's price with the close.
   - The month right after Shiller's last row -> appends one new row.
   - Anything older/further out -> skipped with a warning (refresh the Shiller file).
@@ -59,22 +59,32 @@ def load_shiller():
     return rows
 
 
+def _today_unfinished(meta):
+    """True while today's session is still trading (its close isn't final yet)."""
+    end = (meta.get("currentTradingPeriod") or {}).get("regular", {}).get("end")
+    return bool(end) and datetime.now().timestamp() < end
+
+
 def latest_yahoo_price():
-    """Latest S&P 500 (^GSPC) price from Yahoo Finance: today's price while the market is open, else the last close."""
+    """Last COMPLETED S&P 500 (^GSPC) daily close from Yahoo Finance. During market hours
+    today's moving price is skipped, so the site always matches a real close."""
     req = urllib.request.Request(YAHOO_URL, headers={"User-Agent": "Mozilla/5.0"})
     for attempt in range(3):
         try:
             with urllib.request.urlopen(req, timeout=30) as resp:
-                meta = json.load(resp)["chart"]["result"][0]["meta"]
+                res = json.load(resp)["chart"]["result"][0]
             break
         except OSError:
             if attempt == 2:
                 raise
-    price, ts = meta.get("regularMarketPrice"), meta.get("regularMarketTime")
-    if not price or not ts:
-        raise ValueError("Yahoo returned no price")
-    when = datetime.fromtimestamp(ts, ZoneInfo("America/New_York"))
-    return when.date(), float(price)
+    ny = ZoneInfo("America/New_York")
+    bars = [(datetime.fromtimestamp(t, ny).date(), float(c))
+            for t, c in zip(res["timestamp"], res["indicators"]["quote"][0]["close"]) if c]
+    if bars and _today_unfinished(res["meta"]) and bars[-1][0] == datetime.now(ny).date():
+        bars = bars[:-1]
+    if not bars:
+        raise ValueError("Yahoo returned no completed close")
+    return bars[-1]
 
 
 def daily_closes():
@@ -86,6 +96,8 @@ def daily_closes():
         ny = ZoneInfo("America/New_York")
         out = [(datetime.fromtimestamp(t, ny).strftime("%Y-%m-%d"), round(c, 2))
                for t, c in zip(res["timestamp"], res["indicators"]["quote"][0]["close"]) if c]
+        if out and _today_unfinished(res["meta"]) and out[-1][0] == datetime.now(ny).strftime("%Y-%m-%d"):
+            out = out[:-1]  # today's bar isn't a close yet
         DAILY_CACHE.write_text("date,close\n" + "".join(f"{d},{c}\n" for d, c in out))
         return out
     except Exception as e:
